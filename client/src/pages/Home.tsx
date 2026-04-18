@@ -276,6 +276,19 @@ function useCountdown(targetDate: string) {
   return timeLeft;
 }
 
+function scrollToId(id: string) {
+  const section = document.getElementById(id);
+
+  if (!section) {
+    return;
+  }
+
+  const headerOffset = window.innerWidth >= 1024 ? 116 : 96;
+  const top = section.getBoundingClientRect().top + window.scrollY - headerOffset;
+
+  window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+}
+
 function useScrollProgress() {
   const [progress, setProgress] = useState(0);
 
@@ -368,7 +381,7 @@ function PrimaryButton({ children, href, className = "" }: { children: string; h
     <a
       href={href}
       target="_blank"
-      rel="noreferrer"
+      rel="noopener noreferrer"
       className={`inline-flex items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,var(--brand-gold),var(--brand-orange))] px-6 py-3.5 text-sm font-bold text-white shadow-[0_16px_40px_rgba(239,153,45,0.28)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(239,153,45,0.38)] ${className}`}
     >
       <ExternalLink className="h-4 w-4" />
@@ -380,8 +393,7 @@ function PrimaryButton({ children, href, className = "" }: { children: string; h
 function SecondaryButton({ children, to }: { children: string; to: string }) {
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
-    const target = document.getElementById(to);
-    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollToId(to);
   };
 
   return (
@@ -403,8 +415,7 @@ function Header() {
 
   const scrollToSection = (id: string) => {
     setOpen(false);
-    const section = document.getElementById(id);
-    section?.scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollToId(id);
   };
 
   return (
@@ -413,18 +424,18 @@ function Header() {
         <div className="mx-auto flex max-w-7xl items-center justify-between rounded-[26px] border border-white/60 bg-white/72 px-4 py-3 shadow-[0_22px_70px_rgba(13,59,102,0.12)] backdrop-blur-xl md:px-6">
           <button
             onClick={() => setOpen(!open)}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(13,59,102,0.12)] bg-white text-[var(--brand-blue)] md:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(13,59,102,0.12)] bg-white text-[var(--brand-blue)] xl:hidden"
             aria-label={open ? "إغلاق القائمة" : "فتح القائمة"}
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
 
-          <nav className="hidden items-center gap-1 md:flex">
+          <nav className="hidden items-center gap-0.5 xl:flex">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => scrollToSection(item.id)}
-                className={`rounded-full px-4 py-2.5 text-sm font-semibold transition duration-300 ${
+                className={`whitespace-nowrap rounded-full px-3 py-2.5 text-sm font-semibold transition duration-300 ${
                   activeId === item.id
                     ? "bg-[rgba(13,59,102,0.08)] text-[var(--brand-blue)]"
                     : "text-[var(--text-soft)] hover:bg-[rgba(13,59,102,0.05)] hover:text-[var(--brand-blue)]"
@@ -436,7 +447,7 @@ function Header() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <PrimaryButton href={GOOGLE_FORM_URL} className="hidden md:inline-flex">
+            <PrimaryButton href={GOOGLE_FORM_URL} className="hidden xl:inline-flex">
               سجل الآن
             </PrimaryButton>
             <div className="text-right">
@@ -448,7 +459,7 @@ function Header() {
       </header>
 
       {open && (
-        <div className="fixed inset-x-3 top-20 z-50 rounded-[28px] border border-white/60 bg-white/95 p-4 shadow-[0_26px_90px_rgba(13,59,102,0.16)] backdrop-blur-xl md:hidden">
+        <div className="fixed inset-x-3 top-20 z-50 rounded-[28px] border border-white/60 bg-white/95 p-4 shadow-[0_26px_90px_rgba(13,59,102,0.16)] backdrop-blur-xl xl:hidden">
           <div className="flex flex-col gap-2">
             {navItems.map((item) => (
               <button
@@ -474,7 +485,7 @@ function Header() {
 }
 
 function HeroSection() {
-  const countdown = useCountdown("2026-04-19T00:00:00+03:00");
+  const countdown = useCountdown("2026-05-12T18:00:00+03:00");
 
   const units = [
     { label: "يوم", value: countdown.days },
@@ -484,15 +495,22 @@ function HeroSection() {
   ];
 
   return (
-    <section id="hero" className="relative overflow-hidden px-3 pb-8 pt-24 md:px-6 md:pt-28">
+    <section id="hero" className="relative overflow-hidden px-3 pb-8 pt-24 md:px-6 md:pt-28 lg:pt-32">
       <div className="hero-shell mx-auto max-w-7xl overflow-hidden rounded-[38px] border border-white/60 shadow-[0_35px_120px_rgba(13,59,102,0.14)]">
         <div className="absolute inset-0">
-          <img src={HERO_IMAGE} alt="بيئة ابتكار رقمية متقدمة" className="h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,25,45,0.34),rgba(7,25,45,0.58))]" />
+          <img
+            src={HERO_IMAGE}
+            alt="بيئة ابتكار رقمية متقدمة"
+            className="h-full w-full object-cover"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,25,45,0.52),rgba(7,25,45,0.74))] md:bg-[linear-gradient(180deg,rgba(7,25,45,0.42),rgba(7,25,45,0.64))]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05),transparent_46%)]" />
         </div>
 
-        <div className="relative z-10 flex min-h-[88svh] flex-col justify-between px-6 py-12 text-white md:px-12 md:py-14 lg:px-16">
+        <div className="relative z-10 flex min-h-[78svh] flex-col justify-between px-4 py-10 text-white sm:min-h-[82svh] sm:px-6 sm:py-12 md:px-10 md:py-14 lg:min-h-[88svh] lg:px-16">
           <div className="flex justify-end">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-md">
               <Zap className="h-4 w-4 text-[var(--brand-gold)]" />
@@ -504,31 +522,31 @@ function HeroSection() {
             <p className="mb-4 text-sm font-semibold tracking-[0.24em] text-white/78 md:text-base">
               معسكر الابتكار الرقمي والمفتوح (2)
             </p>
-            <h1 className="max-w-4xl text-balance text-4xl font-black leading-[1.18] md:text-6xl lg:text-7xl">
+            <h1 className="max-w-4xl text-balance text-[clamp(2.35rem,8vw,5.75rem)] font-black leading-[1.12] sm:leading-[1.16]">
               منصة ابتكار عربية تبني حلولًا نوعية في الطاقة والخدمات والبيانات والعمليات الذكية
             </h1>
-            <p className="mt-6 max-w-3xl text-base leading-8 text-white/86 md:text-xl md:leading-9">
+            <p className="mt-6 max-w-3xl text-sm leading-7 text-white/88 sm:text-base sm:leading-8 md:text-xl md:leading-9">
               تجربة تفاعلية تستهدف طلبة الجامعات والمطورين والمبتكرين، وتربط بين التحول الرقمي، والاستدامة، والبحث التطبيقي، والابتكار المفتوح ضمن رحلة عملية تمتد من الفكرة إلى الحل القابل للتنفيذ.
             </p>
 
-            <div className="mt-10 grid w-full max-w-4xl grid-cols-2 gap-4 md:grid-cols-4">
+            <div className="mt-10 grid w-full max-w-4xl grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
               {units.map((unit) => (
                 <div
                   key={unit.label}
-                  className="rounded-[28px] border border-white/18 bg-white/12 px-4 py-5 shadow-[0_22px_50px_rgba(0,0,0,0.14)] backdrop-blur-xl"
+                  className="rounded-[24px] border border-white/18 bg-white/12 px-3 py-4 shadow-[0_22px_50px_rgba(0,0,0,0.14)] backdrop-blur-xl sm:rounded-[28px] sm:px-4 sm:py-5"
                 >
-                  <div className="text-4xl font-black tabular-nums md:text-6xl">{formatNumber(unit.value)}</div>
+                  <div className="text-3xl font-black tabular-nums sm:text-4xl md:text-6xl">{formatNumber(unit.value)}</div>
                   <div className="mt-2 text-sm font-semibold text-white/76 md:text-base">{unit.label}</div>
                 </div>
               ))}
             </div>
 
-            <div className="mt-10 flex flex-col items-center gap-4 md:flex-row">
-              <PrimaryButton href={GOOGLE_FORM_URL}>سجّل عبر النموذج الخارجي</PrimaryButton>
+            <div className="mt-10 flex w-full max-w-2xl flex-col items-stretch gap-4 sm:items-center md:flex-row md:justify-center">
+              <PrimaryButton href={GOOGLE_FORM_URL} className="w-full sm:w-auto">سجّل عبر النموذج الخارجي</PrimaryButton>
               <SecondaryButton to="tracks">استكشف المسارات</SecondaryButton>
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm text-white/76">
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm leading-6 text-white/78">
               <span className="rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-md">RTL عربي كامل</span>
               <span className="rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-md">تسجيل خارجي فقط</span>
               <span className="rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-md">19 أبريل — 13 مايو 2026</span>
@@ -537,7 +555,7 @@ function HeroSection() {
 
           <div className="mt-10 flex justify-center">
             <button
-              onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })}
+              onClick={() => scrollToId("about")}
               className="inline-flex items-center gap-2 rounded-full border border-white/18 bg-white/10 px-4 py-2 text-sm font-semibold text-white/82 backdrop-blur-md transition hover:bg-white/14"
             >
               <Clock3 className="h-4 w-4" />
@@ -581,7 +599,7 @@ function AboutSection() {
         </div>
 
         <div className="relative overflow-hidden rounded-[34px] border border-white/70 bg-white shadow-[0_30px_90px_rgba(13,59,102,0.10)]">
-          <img src={ABOUT_IMAGE} alt="بيئة بحث وتطوير وتقنيات نظيفة" className="h-full w-full object-cover" />
+          <img src={ABOUT_IMAGE} alt="بيئة بحث وتطوير وتقنيات نظيفة" className="h-full w-full object-cover" loading="lazy" decoding="async" />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(255,255,255,0.08))]" />
         </div>
       </div>
@@ -658,7 +676,7 @@ function TracksSection() {
         />
 
         <div className="mb-8 overflow-hidden rounded-[34px] border border-white/70 shadow-[0_30px_90px_rgba(13,59,102,0.10)]">
-          <img src={TRACKS_IMAGE} alt="المسارات التقنية والابتكارية للمعسكر" className="h-[260px] w-full object-cover md:h-[340px]" />
+          <img src={TRACKS_IMAGE} alt="المسارات التقنية والابتكارية للمعسكر" className="h-[220px] w-full object-cover sm:h-[260px] md:h-[340px]" loading="lazy" decoding="async" />
         </div>
 
         <div className="grid gap-5 xl:grid-cols-2">
@@ -884,7 +902,7 @@ function RegistrationSection() {
     <section id="registration" className="section-block section-fade-up pt-8">
       <div className="container">
         <div className="relative overflow-hidden rounded-[38px] border border-white/70 shadow-[0_30px_100px_rgba(13,59,102,0.12)]">
-          <img src={CTA_IMAGE} alt="مشهد مستقبلي يدعم الدعوة للتسجيل" className="absolute inset-0 h-full w-full object-cover" />
+          <img src={CTA_IMAGE} alt="مشهد مستقبلي يدعم الدعوة للتسجيل" className="absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
           <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(7,25,45,0.80),rgba(13,59,102,0.65),rgba(255,255,255,0.12))]" />
           <div className="relative z-10 mx-auto max-w-4xl px-6 py-14 text-center text-white md:px-10 md:py-20">
             <SectionEyebrow>التسجيل</SectionEyebrow>

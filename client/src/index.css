@@ -129,6 +129,8 @@
       radial-gradient(circle at left 20%, rgba(242, 168, 72, 0.08), transparent 18%),
       linear-gradient(180deg, #fbfdff 0%, #f5f9fd 100%);
     min-height: 100vh;
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
   }
 
   h1,
@@ -143,11 +145,18 @@
 
   p {
     margin: 0;
+    overflow-wrap: break-word;
+    text-wrap: pretty;
   }
 
   a {
     color: inherit;
     text-decoration: none;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
   }
 
   button,
@@ -189,6 +198,7 @@
     position: relative;
     padding-top: 4.5rem;
     padding-bottom: 4.5rem;
+    scroll-margin-top: 6.5rem;
   }
 
   .section-fade-up {
@@ -277,6 +287,7 @@
     .section-block {
       padding-top: 6.5rem;
       padding-bottom: 6.5rem;
+      scroll-margin-top: 7.5rem;
     }
   }
 }
