@@ -926,7 +926,7 @@ function RegistrationSection() {
                 className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/92 backdrop-blur-md transition duration-300 hover:bg-white/16"
               >
                 <MessageCircle className="h-4 w-4 shrink-0" />
-                <span>انضم إلى قروب الاستفسارات</span>
+                <span>قروب الاستفسارات</span>
               </a>
             </div>
           </div>
