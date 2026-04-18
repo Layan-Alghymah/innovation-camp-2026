@@ -522,13 +522,13 @@ function HeroSection() {
 
           <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
             <p className="mb-4 text-sm font-semibold tracking-[0.24em] text-white/78 md:text-base">
-              معسكر الابتكار الرقمي والمفتوح (2)
+              التسجيل متاح
             </p>
             <h1 className="max-w-4xl text-balance text-[clamp(2.35rem,8vw,5.75rem)] font-black leading-[1.12] sm:leading-[1.16]">
-              منصة ابتكار عربية تبني حلولًا نوعية في الطاقة والخدمات والبيانات والعمليات الذكية
+              معسكر الابتكار الرقمي والمفتوح (2)
             </h1>
             <p className="mt-6 max-w-3xl text-sm leading-7 text-white/88 sm:text-base sm:leading-8 md:text-xl md:leading-9">
-              تجربة تفاعلية تستهدف طلبة الجامعات والمطورين والمبتكرين، وتربط بين التحول الرقمي، والاستدامة، والبحث التطبيقي، والابتكار المفتوح ضمن رحلة عملية تمتد من الفكرة إلى الحل القابل للتنفيذ.
+              منصة ابتكار عربية تبني حلولًا نوعية في الطاقة والخدمات والبيانات والعمليات الذكية. تجربة تفاعلية تستهدف طلبة الجامعات والمطورين والمبتكرين، وتربط بين التحول الرقمي، والاستدامة، والبحث التطبيقي، والابتكار المفتوح ضمن رحلة عملية تمتد من الفكرة إلى الحل القابل للتنفيذ.
             </p>
 
             <div className="mt-10 grid w-full max-w-4xl grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
