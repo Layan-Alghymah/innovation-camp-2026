@@ -8,6 +8,7 @@ import {
   ExternalLink,
   Lightbulb,
   Menu,
+  MessageCircle,
   Rocket,
   ShieldCheck,
   Sparkles,
@@ -25,6 +26,8 @@ import {
 
 const GOOGLE_FORM_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSc0XWW3H3j5poQf4fH5_gOz051nYu89ryXbJ0wflz16XUteow/viewform?usp=dialog";
+const WHATSAPP_GROUP_URL =
+  "https://chat.whatsapp.com/Gc4UdZvKfO3GcY7TXGUelN?mode=gi_t";
 
 const HERO_IMAGE =
   "https://d2xsxph8kpxj0f.cloudfront.net/90499605/Eia45aG6sfMH4DLpNoeybB/innovation-camp-hero-reference-PogrRCtbqXrz9p9Y4yaY7y.webp";
@@ -914,6 +917,17 @@ function RegistrationSection() {
             <div className="mt-9 flex flex-col items-center justify-center gap-4 md:flex-row">
               <PrimaryButton href={GOOGLE_FORM_URL}>الانتقال إلى نموذج التسجيل</PrimaryButton>
               <SecondaryButton to="timeline">راجع الجدول الزمني أولًا</SecondaryButton>
+            </div>
+            <div className="mt-5 flex justify-center">
+              <a
+                href={WHATSAPP_GROUP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/92 backdrop-blur-md transition duration-300 hover:bg-white/16"
+              >
+                <MessageCircle className="h-4 w-4 shrink-0" />
+                <span>انضم إلى قروب الاستفسارات</span>
+              </a>
             </div>
           </div>
         </div>
