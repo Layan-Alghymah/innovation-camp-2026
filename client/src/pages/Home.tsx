@@ -960,6 +960,21 @@ function RegistrationSection() {
   );
 }
 
+function FloatingWhatsAppButton() {
+  return (
+    <a
+      href={WHATSAPP_GROUP_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="قروب الاستفسارات على واتساب"
+      className="fixed bottom-[max(0.9rem,env(safe-area-inset-bottom))] left-[max(0.9rem,env(safe-area-inset-left))] z-50 inline-flex items-center gap-2 rounded-full border border-[rgba(16,185,129,0.18)] bg-[linear-gradient(135deg,rgba(14,116,144,0.96),rgba(15,118,110,0.96))] px-3.5 py-2.5 text-xs font-bold text-white shadow-[0_12px_30px_rgba(14,116,144,0.22)] transition duration-300 hover:scale-[1.03] hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(14,116,144,0.35)] sm:bottom-[max(1.2rem,env(safe-area-inset-bottom))] sm:left-[max(1.2rem,env(safe-area-inset-left))] sm:px-4 sm:py-3 sm:text-sm"
+    >
+      <MessageCircle className="h-4 w-4 shrink-0 sm:h-4.5 sm:w-4.5" />
+      <span className="whitespace-nowrap leading-none">قروب الاستفسارات</span>
+    </a>
+  );
+}
+
 function Footer() {
   return (
     <footer id="footer" className="pb-10 pt-8">
@@ -1068,6 +1083,7 @@ export default function Home() {
         <RegistrationSection />
       </main>
       <Footer />
+      <FloatingWhatsAppButton />
     </div>
   );
 }
