@@ -675,7 +675,14 @@ function HeroSection() {
             </div>
 
             <div className="mt-10 flex w-full max-w-2xl flex-col items-stretch gap-4 sm:items-center md:flex-row md:justify-center">
-              <PrimaryButton href={GOOGLE_FORM_URL} className="w-full sm:w-auto">سجل الآن</PrimaryButton>
+            <PrimaryButton 
+            href={GOOGLE_FORM_URL} 
+            className="w-full sm:w-auto" 
+            onClick={() => { 
+              if (typeof window !== "undefined" && (window as any).gtag) { 
+                 (window as any).gtag("event", "register_click"); }}}
+            >سجل الآن
+            </PrimaryButton>
               <SecondaryButton to="about">اكتشف المزيد</SecondaryButton>
             </div>
 
@@ -1033,23 +1040,33 @@ function AwardsSection() {
         aria-hidden
       />
       <div className="container relative">
-        <SectionTitle>الجوائز</SectionTitle>
-
         <div className="mx-auto mb-12 max-w-4xl text-center">
+          <h2 className="mb-4 text-balance text-5xl font-black leading-[1.08] tracking-tight text-white md:text-6xl lg:text-7xl [text-shadow:0_2px_22px_rgba(0,35,55,0.38)]">
+            جوائز
+          </h2>
           <p className="text-balance text-[clamp(2.4rem,8vw,4.75rem)] font-black leading-[1.08] tracking-tight text-white [text-shadow:0_2px_22px_rgba(0,35,55,0.38)]">
             تصل إلى 50,000 ريال
           </p>
         </div>
 
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-6 flex justify-center">
-            <div className="w-full max-w-md">
-              <AwardCard place="المركز الأول" amount="15,000" tier="first" size="large" />
+        <div className="mx-auto max-w-3xl">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6" dir="rtl">
+            <div className="rounded-2xl border border-white/20 bg-white/10 p-7 text-center backdrop-blur-sm">
+              <p className="mb-3 text-[clamp(1.6rem,5vw,2.4rem)] font-black leading-tight text-white [text-shadow:0_2px_16px_rgba(0,35,55,0.35)]">
+                30,000 ريال
+              </p>
+              <p className="text-base font-semibold leading-relaxed text-white/90 md:text-lg">
+                للمشاريع الفائزة
+              </p>
             </div>
-          </div>
-          <div className="mx-auto grid max-w-3xl grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
-            <AwardCard place="المركز الثاني" amount="10,000" tier="second" size="medium" />
-            <AwardCard place="المركز الثالث" amount="5,000" tier="third" size="medium" />
+            <div className="rounded-2xl border border-white/20 bg-white/10 p-7 text-center backdrop-blur-sm">
+              <p className="mb-3 text-[clamp(1.6rem,5vw,2.4rem)] font-black leading-tight text-white [text-shadow:0_2px_16px_rgba(0,35,55,0.35)]">
+                20,000 ريال
+              </p>
+              <p className="text-base font-semibold leading-relaxed text-white/90 md:text-lg">
+                دعم لتطوير المشاريع الواعدة بعد المعسكر
+              </p>
+            </div>
           </div>
         </div>
 
