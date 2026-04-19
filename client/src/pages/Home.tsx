@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useMemo, useState } from "react";
+import { type ComponentType, MouseEvent, useEffect, useMemo, useState } from "react";
 import { SectionTitle } from "../components/SectionTitle";
 import { AwardCard } from "../components/AwardCard";
 import {
@@ -6,12 +6,14 @@ import {
   BarChart3,
   Bot,
   Brain,
+  Briefcase,
   Calendar,
   CheckCircle,
   ChevronDown,
   Clock3,
   Cloud,
   ExternalLink,
+  GraduationCap,
   Glasses,
   Layers,
   Leaf,
@@ -50,9 +52,6 @@ const ABOUT_IMAGE =
   "https://d2xsxph8kpxj0f.cloudfront.net/90499605/Eia45aG6sfMH4DLpNoeybB/innovation-camp-about-visual-VrMf9t6tFpXt4bv93ya99F.webp";
 const TRACKS_IMAGE =
   "https://d2xsxph8kpxj0f.cloudfront.net/90499605/Eia45aG6sfMH4DLpNoeybB/innovation-camp-tracks-visual-6vSs76tNfepErhzjDXiZK8.webp";
-const CTA_IMAGE =
-  "https://d2xsxph8kpxj0f.cloudfront.net/90499605/Eia45aG6sfMH4DLpNoeybB/innovation-camp-cta-visual-Vzo4YNiRNFXfcswQ7owXRp.webp";
-
 const navItems = [
   { id: "hero", label: "الرئيسية" },
   { id: "about", label: "عن المعسكر" },
@@ -199,9 +198,13 @@ const timeline = [
   },
   {
     date: "28 أبريل 2026",
-    title: "ورشة مسار البيانات والذكاء المؤسسي — إغلاق التسجيل",
+    title: "ورشة مسار البيانات والذكاء المؤسسي",
+    type: "workshop" as const,
+  },
+  {
+    date: "28 أبريل 2026",
+    title: "إغلاق التسجيل",
     type: "deadline" as const,
-    highlight: true,
   },
   {
     date: "3 مايو 2026",
@@ -219,10 +222,9 @@ const timeline = [
     type: "workshop" as const,
   },
   {
-    date: "12-13 مايو 2026",
+    date: "12–13 مايو 2026",
     title: "عروض المشاريع والتحكيم",
     type: "final" as const,
-    highlight: true,
   },
   {
     date: "يحدد لاحقاً",
@@ -260,61 +262,78 @@ const technologies = [
   { name: "الروبوتات والدرون", icon: Bot, color: "text-red-500" },
 ];
 
-const audience = [
-  "منسوبو الجهتين من الطلاب، بوصفهم الفئة الأكاديمية الأكثر قربًا من التعلم التطبيقي وتطوير الحلول الرقمية والابتكارية.",
-  "منسوبو الجهتين من أعضاء هيئة التدريس، بما يعزز البعد المعرفي والبحثي ويدعم بناء حلول أكثر نضجًا وقابلية للتطوير.",
-  "منسوبو المدينة والجهات التابعة لها من الموظفين، بوصفهم الفئة المهنية الأقرب إلى التحديات التشغيلية والخدمية الواقعية.",
-  "المشاركون من هذه الفئات الذين يملكون اهتمامًا بالابتكار الرقمي، والتقنيات الناشئة، وبناء حلول عملية ذات أثر مؤسسي.",
+interface AudienceItem {
+  title: string;
+  icon: ComponentType<{ className?: string }>;
+  color: string;
+  bgColor: string;
+}
+
+const audience: AudienceItem[] = [
+  {
+    title: "طلاب وطالبات وأعضاء هيئة التدريس بجامعة المجمعة",
+    icon: GraduationCap,
+    color: "text-blue-500",
+    bgColor: "bg-blue-50",
+  },
+  {
+    title: "منسوبي المدينة والجهات التابعة لها من الموظفين",
+    icon: Briefcase,
+    color: "text-emerald-500",
+    bgColor: "bg-emerald-50",
+  },
+  {
+    title: "المهتمون بريادة الأعمال والابتكار",
+    icon: Lightbulb,
+    color: "text-amber-500",
+    bgColor: "bg-amber-50",
+  },
 ];
 
 const faqItems = [
   {
-    q: "من يمكنه المشاركة في التحدي؟",
-    a: "المشاركة مخصصة لمنسوبي الجهتين من الطلاب وأعضاء هيئة التدريس وموظفي المدينة والجهات التابعة لها، مع التركيز على من لديهم اهتمام بالابتكار الرقمي وبناء حلول تقنية ذات أثر عملي.",
+    q: "من يمكنه المشاركة في المعسكر؟",
+    a: "المعسكر مفتوح لمنسوبي جامعة المجمعة ومدينة الملك عبدالله للطاقة الذرية والمتجددة من الطلاب وأعضاء هيئة التدريس وموظفي المدينة والجهات التابعة لها، والمهتمين بالابتكار الرقمي وبناء الحلول التقنية.",
   },
   {
-    q: "هل الهاكاثون حضوري؟",
-    a: "المعسكر يتضمن ورشات أونلاين بشكل مؤكد، وسيتم إبلاغ المشاركين بأي متطلبات حضور لاحقة أو تفاصيل تنفيذية إضافية وفق التحديثات الرسمية.",
+    q: "هل المعسكر حضوري؟",
+    a: "المعسكر يتضمن ورشات أونلاين، ويوم عرض المشاريع يتطلب حضور.",
   },
   {
-    q: "كم عدد أعضاء الفريق في حال المشاركة كفريق؟",
-    a: "في حال كانت المشاركة جماعية، يتكون الفريق من 2 إلى 5 أعضاء.",
+    q: "كم عدد أعضاء الفريق؟",
+    a: "يتكون الفريق من 2 إلى 5 أعضاء.",
   },
   {
     q: "كيف يتم التقييم؟",
     a: "يتم التقييم بحسب معايير التقييم المعتمدة المذكورة، وتشمل وضوح المشكلة، والابتكار، والقيمة والأثر، والقابلية للتطبيق، وجودة النموذج الأولي، واستخدام التقنيات الناشئة، وقابلية التوسع، وجودة العرض وتكامل المشروع.",
   },
   {
-    q: "من يملك حقوق المشاركة؟",
-    a: "حقوق المشاركة تعود إلى المشاركين.",
+    q: "من يملك حقوق الفكرة؟",
+    a: "حقوق الفكرة تعود لصاحبها.",
   },
   {
-    q: "ماذا يميز الهاكاثون عن غيره؟",
+    q: "بماذا يتميز هذا المعسكر؟",
     a: "يمتاز المعسكر بربطه بين التحول الرقمي والابتكار المفتوح والاستدامة، وبتقديمه تحديات تطبيقية واقعية، وورش عمل متخصصة، وإرشاد يساعد على تحويل الأفكار إلى حلول قابلة للتنفيذ داخل بيئة مؤسسية.",
   },
   {
     q: "هل يوجد ورش عمل؟",
-    a: "نعم، يتضمن المعسكر ورش عمل متخصصة في التحول الرقمي والابتكار المفتوح لتهيئة المشاركين وتزويدهم بالمهارات اللازمة لتطوير الحلول.",
-  },
-  {
-    q: "هل يمكن تقديم أكثر من مشروع؟",
-    a: "لا، لا يمكن تقديم أكثر من مشروع.",
+    a: "نعم، يتضمن المعسكر ورش عمل (أونلاين) متخصصة في التحول الرقمي والابتكار المفتوح لتهيئة المشاركين وتزويدهم بالمهارات اللازمة لتطوير الحلول.",
   },
   {
     q: "هل الحضور إلزامي؟",
-    a: "نعم، الحضور إلزامي للورشات الأونلاين، وسيتم تبليغ المشاركين بأي متطلبات حضور إضافية إذا وُجدت لاحقًا.",
+    a: "نعم، الحضور إلزامي للورشات الأونلاين، وليوم عرض المشاريع (حضوري).",
   },
   {
-    q: "أين يُقام المعسكر التدريبي؟",
-    a: "بحسب المعلومات المؤكدة الحالية، المعسكر التدريبي يقدم عبر ورشات أونلاين.",
+    q: "أين يقام المعسكر؟",
+    a: "المعسكر التدريبي يقدم عبر ورشات أونلاين.",
   },
   {
-    q: "هل التقديم يكون فرديًا أم جماعيًا؟",
-    a: "التقديم يكون جماعيًا.",
+    q: "هل التقديم فردي أو جماعي؟",
+    a: "متاح التقديم الفردي والجماعي.",
   },
   {
     q: "كيف يتم التقديم على البرنامج؟",
-    a: "يتم التقديم عبر نموذج التسجيل الخارجي المعتمد، ولا يوجد نموذج تسجيل داخلي داخل الموقع.",
+    a: "يتم التقديم عبر خانة «سجل الآن».",
   },
 ];
 
@@ -358,7 +377,7 @@ function scrollToId(id: string) {
     return;
   }
 
-  const headerOffset = window.innerWidth >= 1024 ? 116 : 96;
+  const headerOffset = window.innerWidth >= 1024 ? 128 : 108;
   const top = section.getBoundingClientRect().top + window.scrollY - headerOffset;
 
   window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
@@ -387,34 +406,39 @@ function useScrollProgress() {
   return progress;
 }
 
-function useActiveSection(ids: string[]) {
-  const [activeId, setActiveId] = useState(ids[0]);
+function useActiveSection(ids: readonly string[]) {
+  const [activeId, setActiveId] = useState(ids[0] ?? "hero");
 
   useEffect(() => {
-    const sections = ids
-      .map((id) => document.getElementById(id))
-      .filter((section): section is HTMLElement => Boolean(section));
+    if (ids.length === 0) {
+      return;
+    }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+    /** يطابق إزاحة scrollToId حتى يتطابق «القسم النشط» مع ما يراه المستخدم تحت الهيدر */
+    const headerActivationOffset = () => (window.innerWidth >= 1024 ? 128 : 108);
 
-        if (visible[0]?.target?.id) {
-          setActiveId(visible[0].target.id);
+    const computeActive = () => {
+      const line = window.scrollY + headerActivationOffset() + 1;
+      let next = ids[0];
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const sectionTop = el.getBoundingClientRect().top + window.scrollY;
+        if (sectionTop <= line) {
+          next = id;
         }
-      },
-      {
-        rootMargin: "-30% 0px -45% 0px",
-        threshold: [0.15, 0.3, 0.55],
-      },
-    );
+      }
+      setActiveId((prev) => (prev === next ? prev : next));
+    };
 
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+    computeActive();
+    window.addEventListener("scroll", computeActive, { passive: true });
+    window.addEventListener("resize", computeActive);
+    return () => {
+      window.removeEventListener("scroll", computeActive);
+      window.removeEventListener("resize", computeActive);
+    };
   }, [ids]);
-
   return activeId;
 }
 
@@ -484,8 +508,8 @@ function SecondaryButton({ children, to }: { children: string; to: string }) {
 }
 
 function Header() {
-  const ids = navItems.map((item) => item.id);
-  const activeId = useActiveSection(ids);
+  const sectionIds = useMemo(() => navItems.map((item) => item.id), []);
+  const activeId = useActiveSection(sectionIds);
   const [open, setOpen] = useState(false);
 
   const scrollToSection = (id: string) => {
@@ -495,33 +519,46 @@ function Header() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-1 z-[60] px-3 md:px-6">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 rounded-[26px] border border-white/60 bg-white/72 px-4 py-3 shadow-[0_22px_70px_rgba(13,59,102,0.12)] backdrop-blur-xl md:gap-4 md:px-6">
-
-          {/* يمين (RTL start): شعار مدينة الملك عبدالله للطاقة الذرية والمتجددة */}
-          <div className="shrink-0">
-            {/* TODO: استبدل هذا بالشعار الرسمي عند توفّره (logo_one.png) */}
-            <div className="flex h-10 w-24 items-center justify-center rounded-md border border-dashed border-slate-300 text-[10px] leading-tight text-slate-400 md:h-12 md:w-28">
-              شعار المدينة
-            </div>
+      <header className="fixed inset-x-0 top-0 z-[60] w-full max-w-[100vw] overflow-x-hidden border-b border-[rgba(13,59,102,0.1)] bg-white/[0.93] shadow-[0_6px_28px_rgba(13,59,102,0.07)] backdrop-blur-md supports-[backdrop-filter]:bg-white/88">
+        <div className="flex w-full min-w-0 max-w-[100vw] items-center justify-between gap-2 px-2 py-2 sm:gap-3 sm:px-3 sm:py-2.5 md:gap-5 md:px-5 md:py-3.5 lg:px-6">
+          {/* الجهة اليمنى (RTL): logo_one — المدينة */}
+          <div className="flex shrink-0 items-center">
+            <a
+              href="#hero"
+              className="flex h-11 w-[min(168px,42vw)] max-w-[42vw] items-center justify-end rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-blue)]/35 sm:h-12 sm:w-[min(188px,40vw)] md:h-[3.35rem] md:w-[min(204px,38vw)]"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToId("hero");
+              }}
+            >
+              <img
+                src="/logo_one.png"
+                alt="مدينة الملك عبدالله للطاقة الذرية والمتجددة"
+                className="h-full w-full max-h-full object-contain object-right"
+                width={200}
+                height={56}
+                decoding="async"
+              />
+            </a>
           </div>
 
-          {/* وسط: زر الهامبرغر (موبايل) + الـ navigation (ديسكتوب) + شارة الحالة */}
-          <div className="flex flex-1 items-center justify-center gap-2">
+          <div className="flex min-w-0 flex-1 items-center justify-center gap-1.5 sm:gap-2">
             <button
+              type="button"
               onClick={() => setOpen(!open)}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(13,59,102,0.12)] bg-white text-[var(--brand-blue)] xl:hidden"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[rgba(13,59,102,0.1)] bg-white text-[var(--brand-blue)] transition hover:bg-[rgba(13,59,102,0.04)] sm:h-10 sm:w-10 xl:hidden"
               aria-label={open ? "إغلاق القائمة" : "فتح القائمة"}
             >
               {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
 
-            <nav className="hidden items-center gap-0.5 xl:flex">
+            <nav className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 overflow-x-auto overflow-y-visible xl:flex xl:px-1">
               {navItems.map((item) => (
                 <button
+                  type="button"
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className={`whitespace-nowrap rounded-full px-3 py-2.5 text-sm font-semibold transition duration-300 ${
+                  className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-2 text-[12px] font-semibold transition duration-300 sm:text-[13px] lg:px-3 lg:py-2.5 lg:text-sm ${
                     activeId === item.id
                       ? "bg-[rgba(13,59,102,0.08)] text-[var(--brand-blue)]"
                       : "text-[var(--text-soft)] hover:bg-[rgba(13,59,102,0.05)] hover:text-[var(--brand-blue)]"
@@ -531,29 +568,36 @@ function Header() {
                 </button>
               ))}
             </nav>
-
-            {/* شارة "التسجيل متاح" — تظهر على الديسكتوب فقط */}
-            <div className="hidden items-center gap-2 rounded-full border border-[rgba(13,59,102,0.12)] bg-white/80 px-3 py-1.5 text-xs font-semibold text-[var(--brand-blue)] xl:flex">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
-              التسجيل متاح
-            </div>
           </div>
 
-          {/* يسار (RTL end): زر التسجيل + شعار جامعة المجمعة */}
-          <div className="flex shrink-0 items-center gap-3">
-            <PrimaryButton href={GOOGLE_FORM_URL} className="hidden xl:inline-flex">
+          {/* الجهة اليسرى (RTL): التسجيل + logo_two — الجامعة */}
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <PrimaryButton href={GOOGLE_FORM_URL} className="hidden px-4 py-2.5 text-xs xl:inline-flex lg:px-5 lg:text-sm">
               سجّل الآن
             </PrimaryButton>
-            {/* TODO: استبدل هذا بالشعار الرسمي عند توفّره (logo_two.png) */}
-            <div className="flex h-10 w-24 items-center justify-center rounded-md border border-dashed border-slate-300 text-[10px] leading-tight text-slate-400 md:h-12 md:w-28">
-              شعار الجامعة
-            </div>
+            <a
+              href="#hero"
+              className="flex size-[3.25rem] shrink-0 items-center justify-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-blue)]/35 sm:size-14 md:size-[3.75rem]"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToId("hero");
+              }}
+            >
+              <img
+                src="/logo_two.png"
+                alt="جامعة المجمعة"
+                className="h-full w-full object-contain"
+                width={180}
+                height={180}
+                decoding="async"
+              />
+            </a>
           </div>
         </div>
       </header>
 
       {open && (
-        <div className="fixed inset-x-3 top-20 z-50 rounded-[28px] border border-white/60 bg-white/95 p-4 shadow-[0_26px_90px_rgba(13,59,102,0.16)] backdrop-blur-xl xl:hidden">
+        <div className="fixed inset-x-0 top-[3.65rem] z-50 mx-0 max-h-[min(78vh,calc(100dvh-4.25rem))] overflow-y-auto border-y border-[rgba(13,59,102,0.08)] bg-white/97 px-3 py-4 shadow-[0_20px_60px_rgba(13,59,102,0.14)] backdrop-blur-xl sm:top-[4.15rem] md:top-[4.35rem] xl:hidden">
           <div className="flex flex-col gap-2">
             {navItems.map((item) => (
               <button
@@ -638,7 +682,7 @@ function HeroSection() {
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm leading-6 text-white/78">
               <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-md">
                 <Calendar className="h-3.5 w-3.5 shrink-0" />
-                12-13 مايو (الفترة الحضورية)
+                من 20 أبريل إلى 13 مايو
               </span>
               <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-md">
                 <MapPin className="h-3.5 w-3.5 shrink-0" />
@@ -833,16 +877,25 @@ function TimelineSection() {
                 className="timeline-card relative md:pr-16"
               >
                 <div className="absolute right-[11px] top-8 hidden h-3 w-3 rounded-full border-4 border-white bg-[var(--brand-gold)] shadow-[0_0_0_8px_rgba(242,168,72,0.12)] md:block" />
-                <div className={`rounded-[30px] border p-6 shadow-[0_20px_60px_rgba(13,59,102,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_80px_rgba(13,59,102,0.10)] ${
-                  item.type === "deadline"
-                    ? "border-red-200 bg-red-50"
-                    : item.type === "final"
-                      ? "border-emerald-500 bg-emerald-50"
-                      : "border-[rgba(13,59,102,0.08)] bg-white"
-                }`}>
+                <div
+                  className={`rounded-[30px] border p-6 shadow-[0_20px_60px_rgba(13,59,102,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_80px_rgba(13,59,102,0.10)] ${
+                    item.type === "deadline"
+                      ? "border-[rgba(219,127,44,0.38)] bg-[linear-gradient(135deg,rgba(219,127,44,0.1),#ffffff)] shadow-[0_14px_44px_rgba(219,127,44,0.1)] ring-1 ring-[rgba(219,127,44,0.12)]"
+                      : item.type === "final"
+                        ? "border-[rgba(13,59,102,0.14)] bg-[linear-gradient(135deg,rgba(242,168,72,0.1),#ffffff)] shadow-[0_14px_44px_rgba(13,59,102,0.06)]"
+                        : "border-[rgba(13,59,102,0.08)] bg-white"
+                  }`}
+                >
                   <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                    <div className="rounded-full border border-[rgba(242,168,72,0.2)] bg-[rgba(242,168,72,0.08)] px-4 py-2 text-sm font-bold text-[var(--brand-orange)]">
-                      {item.date}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <div className="rounded-full border border-[rgba(242,168,72,0.22)] bg-[rgba(242,168,72,0.08)] px-4 py-2 text-sm font-bold text-[var(--brand-orange)]">
+                        {item.date}
+                      </div>
+                      {item.type === "deadline" && item.title === "إغلاق التسجيل" ? (
+                        <span className="rounded-full border border-[rgba(219,127,44,0.35)] bg-white/90 px-3 py-1 text-xs font-bold text-[var(--brand-orange)]">
+                          موعد نهائي
+                        </span>
+                      ) : null}
                     </div>
                     <div className="text-sm font-semibold text-[var(--brand-blue)]">المرحلة {formatNumber(index + 1)}</div>
                   </div>
@@ -904,6 +957,32 @@ function TechnologiesSection() {
   );
 }
 
+function AudienceSection() {
+  return (
+    <section id="audience" className="section-block section-fade-up">
+      <div className="container">
+        <SectionTitle>الفئات المستهدفة</SectionTitle>
+        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">
+          {audience.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.title}
+                className="mx-auto flex aspect-square w-full max-w-xs flex-col items-center justify-center rounded-2xl border border-slate-100 bg-white p-6 text-center shadow-sm transition hover:shadow-md md:max-w-none"
+              >
+                <div className={`mb-4 flex h-16 w-16 items-center justify-center rounded-full ${item.bgColor}`}>
+                  <Icon className={`h-8 w-8 ${item.color}`} />
+                </div>
+                <h3 className="text-base font-bold leading-tight text-slate-800 md:text-lg">{item.title}</h3>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ListCardSection({
   id,
   title,
@@ -945,53 +1024,38 @@ function ListCardSection({
 
 function AwardsSection() {
   return (
-    <section id="awards" className="section-fade-up bg-slate-900 py-20">
-      <div className="container">
+    <section
+      id="awards"
+      className="section-fade-up relative overflow-hidden bg-[linear-gradient(150deg,#0d5278_0%,#1484b8_42%,#07ace9_68%,#0b5f8c_100%)] py-20 text-white"
+    >
+      <div
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,40,62,0.2),transparent_42%,rgba(5,45,68,0.18))]"
+        aria-hidden
+      />
+      <div className="container relative">
         <SectionTitle>الجوائز</SectionTitle>
 
-        <div className="text-center mb-12">
-          <p className="text-lg md:text-xl text-slate-300 mb-2">
-            مجموع جوائز بقيمة تصل إلى
-          </p>
-          <p className="text-6xl md:text-7xl font-extrabold text-emerald-400 tracking-tight">
-            50,000 ريال
+        <div className="mx-auto mb-12 max-w-4xl text-center">
+          <p className="text-balance text-[clamp(2.4rem,8vw,4.75rem)] font-black leading-[1.08] tracking-tight text-white [text-shadow:0_2px_22px_rgba(0,35,55,0.38)]">
+            تصل إلى 50,000 ريال
           </p>
         </div>
 
-        <div className="max-w-5xl mx-auto">
-          <div className="flex justify-center mb-6">
-            <AwardCard
-              place="المركز الأول"
-              amount="15,000"
-              starColor="text-yellow-400"
-              borderColor="border-yellow-400"
-              size="large"
-            />
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-6 flex justify-center">
+            <div className="w-full max-w-md">
+              <AwardCard place="المركز الأول" amount="15,000" tier="first" size="large" />
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            <AwardCard
-              place="المركز الثاني"
-              amount="10,000"
-              starColor="text-gray-300"
-              borderColor="border-gray-300"
-              size="medium"
-            />
-            <AwardCard
-              place="المركز الثالث"
-              amount="5,000"
-              starColor="text-orange-500"
-              borderColor="border-orange-500"
-              size="medium"
-            />
+          <div className="mx-auto grid max-w-3xl grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
+            <AwardCard place="المركز الثاني" amount="10,000" tier="second" size="medium" />
+            <AwardCard place="المركز الثالث" amount="5,000" tier="third" size="medium" />
           </div>
         </div>
 
-        <div className="text-center mt-10">
-          <p className="text-lg text-slate-300">
-            <span className="text-emerald-400 font-semibold">وفرص تمكين واحتضان</span>
-            {" "}للحلول المميزة
-          </p>
-        </div>
+        <p className="mx-auto mt-12 max-w-2xl text-center text-sm font-medium leading-relaxed text-white/80 [text-shadow:0_1px_10px_rgba(0,35,55,0.35)] md:text-base">
+          وفرص تمكين واحتضان للحلول المميزة
+        </p>
       </div>
     </section>
   );
@@ -1003,10 +1067,7 @@ function FaqSection() {
   return (
     <section id="faq" className="section-block section-fade-up bg-[linear-gradient(180deg,rgba(13,59,102,0.03),transparent_75%)]">
       <div className="container max-w-4xl">
-        <SectionHeading
-          title="الأسئلة الشائعة"
-          body="إجابات واضحة ومنظمة تساعدك على فهم آلية المشاركة، وطبيعة الحضور، والتقديم، والتقييم داخل المعسكر بطريقة مريحة للقراءة باللغة العربية."
-        />
+        <SectionTitle>الأسئلة الشائعة</SectionTitle>
 
         <div className="space-y-4" dir="rtl">
           {faqItems.map((item, index) => {
@@ -1023,7 +1084,7 @@ function FaqSection() {
                 </button>
                 <div className={`grid transition-all duration-500 ease-out ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
                   <div className="overflow-hidden">
-                    <div className="border-t border-[rgba(13,59,102,0.06)] px-6 py-5 text-right text-sm leading-8 text-[var(--text-soft)] sm:px-7 sm:text-base sm:leading-8">
+                    <div className="border-t border-[rgba(13,59,102,0.06)] px-6 py-5 text-right text-sm leading-8 text-slate-600 sm:px-7 sm:text-base sm:leading-8">
                       {item.a}
                     </div>
                   </div>
@@ -1041,33 +1102,18 @@ function RegistrationSection() {
   return (
     <section id="registration" className="section-block section-fade-up pt-8">
       <div className="container">
-        <div className="relative overflow-hidden rounded-[38px] border border-white/70 shadow-[0_30px_100px_rgba(13,59,102,0.12)]">
-          <img src={CTA_IMAGE} alt="مشهد مستقبلي يدعم الدعوة للتسجيل" className="absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
-          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(7,25,45,0.80),rgba(13,59,102,0.65),rgba(255,255,255,0.12))]" />
-          <div className="relative z-10 mx-auto max-w-4xl px-6 py-14 text-center text-white md:px-10 md:py-20">
-            <SectionEyebrow>التسجيل</SectionEyebrow>
-            <h2 className="text-balance text-3xl font-black leading-[1.25] md:text-5xl">
-              هل أنت جاهز لتطوير حل رقمي نوعي داخل بيئة ابتكار تطبيقية؟
-            </h2>
-            <p className="mt-5 text-base leading-8 text-white/84 md:text-lg">
-              التسجيل يتم حصريًا عبر نموذج Google Form الخارجي المعتمد. لا توجد أي استمارة داخلية داخل الموقع، وجميع الدعوات إلى الإجراء تنقلك مباشرة إلى صفحة التسجيل الرسمية.
-            </p>
-            <div className="mt-9 flex flex-col items-center justify-center gap-4 md:flex-row">
-              <PrimaryButton href={GOOGLE_FORM_URL}>الانتقال إلى نموذج التسجيل</PrimaryButton>
-              <SecondaryButton to="timeline">راجع الجدول الزمني أولًا</SecondaryButton>
-            </div>
-            <div className="mt-5 flex justify-center">
-              <a
-                href={WHATSAPP_GROUP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/92 backdrop-blur-md transition duration-300 hover:bg-white/16"
-              >
-                <MessageCircle className="h-4 w-4 shrink-0" />
-                <span>قروب الاستفسارات</span>
-              </a>
-            </div>
-          </div>
+        <div className="py-16 text-center">
+          <h2 className="mb-8 text-3xl font-bold text-slate-900 md:text-4xl">
+            هل أنت جاهز لتطوير حل رقمي نوعي داخل بيئة ابتكار تطبيقية؟
+          </h2>
+          <a
+            href={GOOGLE_FORM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full bg-[#1e3a5f] px-10 py-4 text-lg font-bold text-white shadow-lg transition-all hover:bg-[#2a4a73] hover:shadow-xl"
+          >
+            سجل الآن
+          </a>
         </div>
       </div>
     </section>
@@ -1081,49 +1127,88 @@ function FloatingWhatsAppButton() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="قروب الاستفسارات على واتساب"
-      className="fixed bottom-[max(0.9rem,env(safe-area-inset-bottom))] left-[max(0.9rem,env(safe-area-inset-left))] z-50 inline-flex items-center gap-2 rounded-full border border-[rgba(16,185,129,0.18)] bg-[linear-gradient(135deg,rgba(14,116,144,0.96),rgba(15,118,110,0.96))] px-3.5 py-2.5 text-xs font-bold text-white shadow-[0_12px_30px_rgba(14,116,144,0.22)] transition duration-300 hover:scale-[1.03] hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(14,116,144,0.35)] sm:bottom-[max(1.2rem,env(safe-area-inset-bottom))] sm:left-[max(1.2rem,env(safe-area-inset-left))] sm:px-4 sm:py-3 sm:text-sm"
+      className="fixed bottom-[max(0.9rem,env(safe-area-inset-bottom))] left-[max(0.9rem,env(safe-area-inset-left))] z-50 inline-flex items-center gap-3 rounded-full bg-[#1e3a5f] px-6 py-3 text-base font-bold text-white shadow-md transition-all hover:bg-[#2a4a73] hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 sm:bottom-[max(1.2rem,env(safe-area-inset-bottom))] sm:left-[max(1.2rem,env(safe-area-inset-left))] sm:px-8 sm:py-3.5 sm:text-lg"
     >
-      <MessageCircle className="h-4 w-4 shrink-0 sm:h-4.5 sm:w-4.5" />
+      <MessageCircle className="h-5 w-5 shrink-0 text-white" />
       <span className="whitespace-nowrap leading-none">قروب الاستفسارات</span>
     </a>
   );
 }
 
 function Footer() {
+  const handleSectionLink = (event: MouseEvent<HTMLAnchorElement>, id: string) => {
+    event.preventDefault();
+    scrollToId(id);
+  };
+
   return (
-    <footer id="footer" className="pb-10 pt-8">
-      <div className="container">
-        <div className="rounded-[34px] border border-[rgba(13,59,102,0.08)] bg-white px-6 py-8 shadow-[0_20px_60px_rgba(13,59,102,0.06)] md:px-8">
-          <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-end">
-            <div>
-              <div className="text-sm font-semibold text-[var(--text-soft)]">معسكر الابتكار الرقمي والمفتوح (2)</div>
-              <div className="mt-2 text-3xl font-black text-[var(--brand-ink)]">2026</div>
-              <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--text-soft)]">
-                موقع عربي RTL مصمم لتقديم تجربة تعريفية راقية وتفاعلية حول المعسكر، مع إبراز المسارات، والجدول الزمني، ومتطلبات المشاركة، وربط المستخدم مباشرة بالتسجيل الخارجي المعتمد.
-              </p>
-            </div>
-            <div className="grid gap-6 sm:grid-cols-2">
-              <div>
-                <div className="mb-3 text-sm font-bold text-[var(--brand-blue)]">تنقل سريع</div>
-                <div className="space-y-2 text-sm text-[var(--text-soft)]">
-                  {navItems.slice(0, 5).map((item) => (
-                    <button key={item.id} onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" })} className="block hover:text-[var(--brand-blue)]">
-                      {item.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <div className="mb-3 text-sm font-bold text-[var(--brand-blue)]">إجراء مباشر</div>
-                <div className="space-y-3">
-                  <PrimaryButton href={GOOGLE_FORM_URL} className="w-full">سجل الآن</PrimaryButton>
-                  <p className="text-sm leading-7 text-[var(--text-soft)]">
-                    جميع عمليات التسجيل تتم خارجيًا عبر Google Form، وتفتح في تبويب جديد لضمان وضوح المسار وعدم جمع أي بيانات داخل الموقع.
-                  </p>
-                </div>
-              </div>
-            </div>
+    <footer
+      id="footer"
+      className="mt-auto border-t border-[rgba(13,59,102,0.12)] bg-[linear-gradient(180deg,#f0f6fc_0%,#e4edf6_100%)] py-12 text-[var(--brand-ink)]"
+    >
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          <div>
+            <h3 className="mb-3 text-xl font-bold text-[var(--brand-blue)]">معسكر الابتكار الرقمي والمفتوح 2026</h3>
+            <p className="text-sm leading-relaxed text-[var(--text-soft)]">
+              بالتعاون بين جامعة المجمعة ومدينة الملك عبدالله للطاقة الذرية والمتجددة (K·A·CARE)
+            </p>
           </div>
+
+          <div>
+            <h4 className="mb-3 text-base font-bold text-[var(--brand-blue)]">روابط سريعة</h4>
+            <ul className="space-y-2 text-sm text-[var(--text-soft)]">
+              <li>
+                <a
+                  href="#about"
+                  onClick={(e) => handleSectionLink(e, "about")}
+                  className="transition hover:text-[var(--brand-ink)]"
+                >
+                  عن المعسكر
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#tracks"
+                  onClick={(e) => handleSectionLink(e, "tracks")}
+                  className="transition hover:text-[var(--brand-ink)]"
+                >
+                  المسارات
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#timeline"
+                  onClick={(e) => handleSectionLink(e, "timeline")}
+                  className="transition hover:text-[var(--brand-ink)]"
+                >
+                  الجدول الزمني
+                </a>
+              </li>
+              <li>
+                <a href="#faq" onClick={(e) => handleSectionLink(e, "faq")} className="transition hover:text-[var(--brand-ink)]">
+                  الأسئلة الشائعة
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="mb-3 text-base font-bold text-[var(--brand-blue)]">تواصل معنا</h4>
+            <a
+              href={WHATSAPP_GROUP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--brand-blue)] transition hover:text-[var(--brand-ink)]"
+            >
+              <MessageCircle className="h-4 w-4 shrink-0" />
+              قروب الاستفسارات
+            </a>
+          </div>
+        </div>
+
+        <div className="mt-8 border-t border-[rgba(13,59,102,0.1)] pt-6 text-center text-sm text-[var(--text-soft)]">
+          © 2026 معسكر الابتكار الرقمي والمفتوح — جميع الحقوق محفوظة
         </div>
       </div>
     </footer>
@@ -1153,11 +1238,11 @@ function RevealObserver() {
 
 export default function Home() {
   return (
-    <div dir="rtl" className="min-h-screen bg-[var(--page-bg)] text-[var(--brand-ink)]">
+    <div dir="rtl" className="flex min-h-screen max-w-[100vw] flex-col overflow-x-hidden bg-[var(--page-bg)] text-[var(--brand-ink)]">
       <RevealObserver />
       <ScrollProgressBar />
       <Header />
-      <main>
+      <main className="flex-1">
         <HeroSection />
         <AboutSection />
         <ObjectivesSection />
@@ -1173,13 +1258,7 @@ export default function Home() {
         />
         <CriteriaSection />
         <TechnologiesSection />
-        <ListCardSection
-          id="audience"
-          title="الفئات المستهدفة"
-          body="يعرّف هذا القسم الجمهور المستهدف بصورة صريحة، بحيث يشعر الزائر سريعًا أن المعسكر موجّه إليه إذا كان من منسوبي الجهتين من الطلاب أو أعضاء هيئة التدريس أو موظفي المدينة والجهات التابعة لها، ضمن إطار يجمع بين البعد الأكاديمي والمهني والابتكاري."
-          items={audience}
-          columns={2}
-        />
+        <AudienceSection />
         <FaqSection />
         <RegistrationSection />
       </main>
