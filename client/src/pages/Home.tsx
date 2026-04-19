@@ -1,18 +1,33 @@
 import { MouseEvent, useEffect, useMemo, useState } from "react";
+import { SectionTitle } from "../components/SectionTitle";
+import { AwardCard } from "../components/AwardCard";
 import {
   ArrowUpLeft,
-  BrainCircuit,
+  BarChart3,
+  Bot,
+  Brain,
+  Calendar,
+  CheckCircle,
   ChevronDown,
   Clock3,
-  Cpu,
+  Cloud,
   ExternalLink,
+  Glasses,
+  Layers,
+  Leaf,
   Lightbulb,
+  Link2,
+  MapPin,
   Menu,
   MessageCircle,
-  Rocket,
-  ShieldCheck,
+  Monitor,
+  Network,
+  Package,
   Sparkles,
-  Waves,
+  Target,
+  TrendingUp,
+  Users,
+  Wifi,
   X,
   Zap,
 } from "lucide-react";
@@ -42,8 +57,8 @@ const navItems = [
   { id: "hero", label: "الرئيسية" },
   { id: "about", label: "عن المعسكر" },
   { id: "objectives", label: "الأهداف" },
-  { id: "activities", label: "الأنشطة" },
   { id: "tracks", label: "المسارات" },
+  { id: "awards", label: "الجوائز" },
   { id: "timeline", label: "الجدول الزمني" },
   { id: "requirements", label: "شروط المشاركة" },
   { id: "criteria", label: "معايير التقييم" },
@@ -53,117 +68,167 @@ const navItems = [
 const objectives = [
   {
     title: "تحفيز الابتكار الرقمي",
-    body: "تمكين المشاركين من تطوير حلول تقنية متقدمة تعزز كفاءة الخدمات وتحسن العمليات التشغيلية في بيئات العمل الحديثة.",
+    description: "تمكين منسوبي المدينة والجامعة من تطوير حلول تقنية متقدمة تعزز كفاءة الخدمات وتحسين العمليات التشغيلية.",
     icon: Lightbulb,
   },
   {
     title: "تعزيز مفاهيم الاستدامة",
-    body: "توظيف التقنيات الحديثة لدعم حلول مبتكرة تنعكس على الأبعاد البيئية والاجتماعية والاقتصادية بصورة عملية قابلة للقياس.",
-    icon: Waves,
+    description: "توظيف التقنيات الحديثة لدعم حلول مبتكرة تسهم في تطبيق مفاهيم وركائز الاستدامة (البيئية، الاجتماعية، الاقتصادية).",
+    icon: Leaf,
   },
   {
     title: "تمكين الكفاءات الوطنية",
-    body: "تنمية مهارات الابتكار وريادة الأعمال الرقمية من خلال ورش عمل متخصصة وتحديات تطبيقية تعزز الجاهزية التنفيذية.",
-    icon: Rocket,
+    description: "تنمية مهارات الابتكار وريادة الأعمال الرقمية لدى المشاركين عبر ورش عمل وتحديات عملية.",
+    icon: Users,
   },
   {
     title: "تحقيق التكامل المعرفي",
-    body: "تعزيز التعاون البحثي والتقني بين الجهات ذات العلاقة لإيجاد حلول رقمية نوعية تدعم التحول الرقمي المؤسسي.",
-    icon: BrainCircuit,
+    description: "تعزيز التعاون البحثي والتقني بين المدينة والجامعة لإيجاد حلول رقمية نوعية تدعم التحول الرقمي.",
+    icon: Network,
   },
   {
     title: "تحسين تجربة المستفيدين",
-    body: "تطوير خدمات وتطبيقات ذكية ترفع مستوى الجودة وسهولة الوصول وتحقق تجربة استخدام أكثر كفاءة ووضوحًا.",
+    description: "تطوير تطبيقات وخدمات ذكية تسهم في رفع مستوى الجودة وتحقيق تجربة استخدام متميزة.",
     icon: Sparkles,
   },
   {
     title: "بناء منظومة ابتكار مستدامة",
-    body: "دعم تحويل الأفكار إلى مشاريع قابلة للتنفيذ داخل بيئة مؤسسية مستمرة تعزز الأثر وتفتح مسارات تطوير لاحقة.",
-    icon: ShieldCheck,
+    description: "تمكين وبناء بيئة ابتكارية مستدامة داخل المدينة والجامعة تدعم توليد الأفكار وتحويلها إلى مشاريع قابلة للتنفيذ.",
+    icon: TrendingUp,
   },
 ];
 
-const activities = [
-  {
-    title: "تحديد التحديات",
-    body: "جمع وتحليل المشكلات والفرص التحسينية داخل الجهات والإدارات المختلفة لتحديد المجالات التي تحتاج إلى حلول ابتكارية.",
-  },
-  {
-    title: "ورش التحول الرقمي والابتكار المفتوح",
-    body: "تنظيم ورش عمل تهدف إلى تعزيز فهم المشاركين لمفاهيم التحول الرقمي والابتكار المفتوح وتزويدهم بالمهارات اللازمة لتبني التقنيات الناشئة.",
-  },
-  {
-    title: "طرح التحديات وتحفيز المبتكرين",
-    body: "إقامة فعاليات تنافسية مثل المسابقات أو الهاكاثونات، حيث يتم عرض التحديات المحددة ودعوة المبتكرين لتقديم حلول نوعية ومبتكرة.",
-  },
-  {
-    title: "تمكين الحلول المميزة ومتابعة تنفيذها",
-    body: "اختيار الحلول المتميزة وتقديم الدعم اللازم لتطويرها وتنفيذها مع متابعة مستمرة لتحقيق أثر إيجابي ملموس على الخدمات المقدمة.",
-  },
-];
 
 const tracks = [
   {
-    title: "الطاقة الذكية والاستدامة",
-    summary:
-      "حلول مبتكرة لتعزيز كفاءة الطاقة المتجددة وتحسين الأداء والتنبؤ بالأعطال ورفع كفاءة التشغيل والاستثمار في البنية التحتية للطاقة.",
-    badge: "طاقة + ذكاء اصطناعي",
+    id: 1,
+    title: "المسار الأول: الطاقة وذكاء اصطناعي",
+    description: "يركّز هذا المسار على تطوير حلول مبتكرة لتعزيز كفاءة الطاقة المتجددة، عبر استخدام الذكاء الاصطناعي والتحليلات التنبؤية لتحسين الأداء، تقليل الأعطال، ورفع كفاءة التشغيل والاستثمار في البنية التحتية للطاقة.",
     challenges: [
-      "التنبؤ بأعطال الألواح الشمسية والبطاريات باستخدام الذكاء الاصطناعي وتعلم الآلة.",
-      "تحليل وتوقع أداء محطات الطاقة المتجددة وقراءة بيانات مصادر الطاقة بذكاء.",
-      "قياس تراكم الأتربة وتحليل الإشعاع الشمسي لتحسين الإنتاجية وكفاءة الألواح.",
-      "بناء منصات توصية ذكية للاستثمار الطاقي أو توزيع الطاقة بشكل ديناميكي حسب الطلب.",
+      "تحديد العمر الافتراضي للألواح الشمسية والبطاريات باستخدام الذكاء الاصطناعي",
+      "التنبؤ بالأعطال في الألواح الشمسية باستخدام تعلم الآلة",
+      "تحليل وتوقع أداء محطات الطاقة المتجددة",
+      "تحليل بيانات مصادر الطاقة المتجددة (أطلس الطاقة)",
+      "تقييم أداء الأنظمة الكهروضوئية الصغيرة الموزعة",
+      "تصميم احتياج المباني للألواح الشمسية بناءً على تحليل البيانات",
+      "استخدام الطباعة ثلاثية الأبعاد لتصنيع نماذج الألواح أو مكونات توربينات الرياح",
+      "قياس تراكم الأتربة وتأثيره على كفاءة الألواح",
+      "قياس وتحليل الإشعاع الشمسي لتحسين الإنتاجية",
+      "نظام رقمي يحاكي \"توأم رقمي\" لمحطة طاقة كاملة لتجربة سيناريوهات الأداء",
+      "منصة توصيات ذكية تقترح أفضل استثمار للطاقة لكل مبنى أو حي",
+      "استخدام الذكاء التوليدي لإنشاء خطط توزيع طاقة ديناميكية حسب الطلب",
     ],
   },
   {
-    title: "الأصول الذكية والعمليات الميدانية",
-    summary:
-      "معالجة تحديات إدارة الأصول والبنية التحتية عبر دمج إنترنت الأشياء والدرون والرؤية الحاسوبية والروبوتات والأنظمة الرقمية المتكاملة.",
-    badge: "أصول + عمليات ميدانية",
+    id: 2,
+    title: "المسار الثاني: الأصول الذكية والعمليات الميدانية",
+    description: "يعالج هذا المسار تحديات إدارة الأصول والبنية التحتية عبر دمج التقنيات الذكية مثل إنترنت الأشياء، الدرون، والرؤية الحاسوبية لتحسين عمليات المراقبة، الصيانة، والتشغيل الميداني بشكل أكثر كفاءة واستباقية.",
     challenges: [
-      "استخدام الدرون للمراقبة الأمنية ومتابعة المنشآت والمواقع الحيوية.",
-      "توظيف الروبوتات في تنظيف الألواح الشمسية والصيانة الاستباقية للأصول.",
-      "تحليل الصور لتحديد مستوى الضرر والصيانة المطلوبة في الطرق أو المرافق.",
-      "إنشاء منصة قيادة وتحكم موحدة تعرض حالة الأصول لحظيًا وتدعم القرار الميداني.",
+      "استخدام الدرون للحراسات الأمنية ومراقبة المنشآت",
+      "تنظيف الألواح الشمسية باستخدام الروبوتات",
+      "تحليل صور الطرق لتحديد مستوى الضرر والصيانة المطلوبة",
+      "استخدام الكاميرات الذكية للمراقبة وتحليل المواقع",
+      "استخدام الواقع المعزز لمحاكاة تجارب ميدانية أو حل مشاكل المواقع",
+      "ربط بيانات الأجهزة والمستشعرات لتحسين عمليات القياس",
+      "إدارة وصيانة الأصول عبر أنظمة رقمية متكاملة",
+      "روبوتات ذاتية التنقل تقوم بالصيانة الاستباقية للأصول",
+      "نظام تنبيه ذكي يدمج بيانات الطقس والأصول لتوقع الأعطال قبل حدوثها",
+      "منصة تحكم موحدة (Command Center) تعرض حالة جميع الأصول لحظياً",
     ],
   },
   {
-    title: "الخدمات الرقمية وتجربة المستخدم",
-    summary:
-      "إعادة تصميم تجربة المستخدم والخدمات الرقمية بحلول ذكية وتفاعلية ترفع الكفاءة وتسهل الوصول إلى الخدمات باستخدام الذكاء الاصطناعي وVR/AR.",
-    badge: "خدمات + تجربة مستخدم",
+    id: 3,
+    title: "المسار الثالث: الخدمات الرقمية وتجربة المستخدم",
+    description: "يهدف هذا المسار إلى إعادة تصميم تجربة المستخدم والخدمات الرقمية من خلال حلول ذكية وتفاعلية ترفع كفاءة العمليات وتسهل الوصول للخدمات، سواء للموظفين أو المستفيدين، باستخدام تقنيات مثل الذكاء الاصطناعي وAR/VR.",
     challenges: [
-      "التدريب على تركيب الألواح الشمسية باستخدام الواقع الافتراضي أو المعزز.",
-      "إنشاء بطاقات تعريف رقمية وربطها بخدمات أو إجراءات عبر QR Code.",
-      "تطوير Chatbot أو AI Copilot لخدمة الموظفين والإجابة على الاستفسارات بفعالية.",
-      "بناء نظام توصيات ذكي يخصص الخدمات حسب سلوك المستخدم واحتياجه.",
+      "التدريب على تركيب الألواح الشمسية باستخدام الواقع الافتراضي/المعزز",
+      "إنشاء بطاقات تعريف رقمية وربطها عبر QR Code",
+      "تطوير Chatbot لخدمة الموظفين والإجابة على الاستفسارات",
+      "تسجيل الحضور باستخدام التعرف على الوجه",
+      "استخدام الأجهزة الذكية (مثل الساعات) لتحليل بيانات الموظفين",
+      "تسهيل الوصول للخدمات والإجراءات عبر منصات ذكية",
+      "مساعد افتراضي شامل (Copilot AI) لكل موظف داخل المؤسسة",
+      "تجربة \"ميتافيرس مؤسسي\" للتدريب والتعاون عن بُعد",
+      "نظام توصيات ذكي يخصص الخدمات حسب سلوك المستخدم",
     ],
   },
   {
-    title: "البيانات والذكاء المؤسسي",
-    summary:
-      "استثمار البيانات كمورد استراتيجي عبر التحليل المتقدم والذكاء الاصطناعي لاستخلاص الرؤى ودعم القرار وتعزيز التكامل بين الأنظمة.",
-    badge: "بيانات + ذكاء مؤسسي",
+    id: 4,
+    title: "المسار الرابع: البيانات والذكاء المؤسسي",
+    description: "يركّز هذا المسار على استثمار البيانات كمورد استراتيجي من خلال التحليل المتقدم والذكاء الاصطناعي لاستخلاص الرؤى، دعم اتخاذ القرار، وتعزيز التكامل بين الأنظمة المختلفة داخل المدينة أو المؤسسة.",
     challenges: [
-      "جمع وتحليل البيانات المرتبطة بتطورات المدينة أو المؤسسة واستخراج مؤشرات قابلة للتنفيذ.",
-      "تحليل الأخبار والمصادر المختلفة لاستخلاص رؤى استراتيجية تدعم صناع القرار.",
-      "بناء محرك قرار ذكي يقدم توصيات مباشرة للإدارة بناءً على البيانات.",
-      "تصميم منصة موحدة لدمج البيانات أو التنبؤ بالاتجاهات المستقبلية للمدينة أو السوق.",
+      "جمع وتحليل البيانات المرتبطة بتطورات المدينة",
+      "تحليل الأخبار والمصادر المختلفة لاستخراج رؤى استراتيجية",
+      "استخراج القيمة من البيانات لدعم قطاعات الأعمال",
+      "متابعة وتحليل وسائل التواصل الاجتماعي",
+      "استخدام الحوسبة السحابية لتخزين وإدارة البيانات",
+      "التحقق من الهوية باستخدام تقنية البلوكتشين",
+      "استخدام الذكاء التوليدي في تخطيط الموارد المؤسسية",
+      "\"محرك قرار ذكي\" يقدم توصيات مباشرة للإدارة بناءً على البيانات",
+      "منصة موحدة لدمج جميع بيانات المدينة (Urban Data Platform)",
+      "نظام ذكاء اصطناعي يتنبأ بالاتجاهات المستقبلية للمدينة أو السوق",
     ],
   },
 ];
 
 const timeline = [
-  { date: "19 أبريل 2026", title: "إطلاق المعسكر وفتح الصفحة", body: "بدء الحملة التعريفية وإطلاق التجربة الرقمية الرسمية للمعسكر." },
-  { date: "19–24 أبريل 2026", title: "التعريف بالمسارات والتحديات", body: "رفع الوعي بالمبادرة، وشرح المجالات الرئيسية والفرص الابتكارية المتاحة للمشاركين." },
-  { date: "19–28 أبريل 2026", title: "فترة التسجيل", body: "استقبال طلبات المشاركة عبر نموذج التسجيل الخارجي المعتمد." },
-  { date: "28 أبريل 2026", title: "إغلاق التسجيل", body: "إقفال التقديم والانتقال إلى مرحلة مراجعة الطلبات وإشعار المشاركين." },
-  { date: "29–30 أبريل 2026", title: "فرز المشاركين وإشعار المقبولين", body: "مراجعة الطلبات وإبلاغ المشاركين المستوفين للشروط بالخطوات التالية." },
-  { date: "1–4 مايو 2026", title: "الورش الافتراضية والتهيئة", body: "تهيئة المشاركين معرفيًا ومهاريًا قبل مرحلة التطوير العملي." },
-  { date: "5–7 مايو 2026", title: "تطوير الأفكار والنماذج الأولية", body: "تحويل الأفكار إلى حلول أولية قابلة للعرض والمناقشة." },
-  { date: "8–10 مايو 2026", title: "الإرشاد والتحسين", body: "جلسات مراجعة وتطوير وتحسين الحلول بناءً على التوجيه والتغذية الراجعة." },
-  { date: "11 مايو 2026", title: "التحكيم الأولي والاستعداد للعرض", body: "تهيئة الفرق والعروض النهائية وصقل الرسائل التنفيذية للمشروع." },
-  { date: "12–13 مايو 2026", title: "العروض النهائية والختام", body: "التحكيم النهائي، إبراز الحلول المميزة، واختتام المعسكر." },
+  {
+    date: "19 أبريل 2026",
+    title: "الإعلان وبداية التسجيل",
+    type: "launch" as const,
+  },
+  {
+    date: "20 أبريل 2026",
+    title: "اللقاء التعريفي وورشة التعريف بالمعسكر",
+    type: "workshop" as const,
+  },
+  {
+    date: "22 أبريل 2026",
+    title: "ورشة مسار الطاقة الذكية والاستدامة",
+    type: "workshop" as const,
+  },
+  {
+    date: "26 أبريل 2026",
+    title: "ورشة مسار الأصول الذكية والعمليات الميدانية",
+    type: "workshop" as const,
+  },
+  {
+    date: "27 أبريل 2026",
+    title: "ورشة مسار الخدمات الرقمية وتجربة المستفيد",
+    type: "workshop" as const,
+  },
+  {
+    date: "28 أبريل 2026",
+    title: "ورشة مسار البيانات والذكاء المؤسسي — إغلاق التسجيل",
+    type: "deadline" as const,
+    highlight: true,
+  },
+  {
+    date: "3 مايو 2026",
+    title: "ورشة تطوير الأفكار وبناء النماذج الأولية",
+    type: "workshop" as const,
+  },
+  {
+    date: "4 مايو 2026",
+    title: "ورشة بناء نموذج العمل التجاري",
+    type: "workshop" as const,
+  },
+  {
+    date: "5 مايو 2026",
+    title: "بناء العروض النهائية (Pitching)",
+    type: "workshop" as const,
+  },
+  {
+    date: "12-13 مايو 2026",
+    title: "عروض المشاريع والتحكيم",
+    type: "final" as const,
+    highlight: true,
+  },
+  {
+    date: "يحدد لاحقاً",
+    title: "المعرض الختامي",
+    type: "closing" as const,
+  },
 ];
 
 const requirements = [
@@ -175,25 +240,24 @@ const requirements = [
 ];
 
 const criteria = [
-  "وضوح المشكلة وأهميتها.",
-  "الابتكار والأصالة والابتعاد عن الحلول التقليدية أو المكررة.",
-  "القيمة والأثر للمستفيدين أو الجهات المستهدفة.",
-  "القابلية للتطبيق على أرض الواقع ووضوح المتطلبات التشغيلية.",
-  "جودة النموذج الأولي أو العرض العملي للحل.",
-  "توظيف التقنيات الناشئة مثل الذكاء الاصطناعي وإنترنت الأشياء بفعالية.",
-  "قابلية التوسع والاستدامة ووضوح نموذج العمل المستقبلي.",
-  "جودة العرض التقديمي وتكامل عناصر المشروع وجاهزية الفريق للتحكيم.",
+  { label: "الابتكار والأصالة", icon: Lightbulb },
+  { label: "القابلية للتطبيق", icon: CheckCircle },
+  { label: "نموذج العمل والاستدامة", icon: TrendingUp },
+  { label: "جودة العرض والتقديم", icon: Monitor },
+  { label: "القيمة والأثر", icon: Target },
+  { label: "استخدام التقنيات الناشئة", icon: Zap },
+  { label: "التكامل والجاهزية", icon: Layers },
+  { label: "جودة النموذج الأولي", icon: Package },
 ];
 
 const technologies = [
-  "الذكاء الاصطناعي",
-  "إنترنت الأشياء",
-  "تحليل البيانات والبيانات الضخمة",
-  "الرؤية الحاسوبية",
-  "الحوسبة السحابية",
-  "الواقع الافتراضي والمعزز",
-  "الروبوتات والدرون",
-  "تقنيات التحقق والهوية الرقمية",
+  { name: "الذكاء الاصطناعي والذكاء التوليدي", icon: Brain, color: "text-purple-500" },
+  { name: "إنترنت الأشياء (IoT)", icon: Wifi, color: "text-blue-500" },
+  { name: "الواقع الافتراضي والمعزز (VR/AR)", icon: Glasses, color: "text-pink-500" },
+  { name: "الحوسبة السحابية", icon: Cloud, color: "text-sky-500" },
+  { name: "تحليل البيانات", icon: BarChart3, color: "text-emerald-500" },
+  { name: "البلوكتشين", icon: Link2, color: "text-amber-500" },
+  { name: "الروبوتات والدرون", icon: Bot, color: "text-red-500" },
 ];
 
 const audience = [
@@ -201,21 +265,6 @@ const audience = [
   "منسوبو الجهتين من أعضاء هيئة التدريس، بما يعزز البعد المعرفي والبحثي ويدعم بناء حلول أكثر نضجًا وقابلية للتطوير.",
   "منسوبو المدينة والجهات التابعة لها من الموظفين، بوصفهم الفئة المهنية الأقرب إلى التحديات التشغيلية والخدمية الواقعية.",
   "المشاركون من هذه الفئات الذين يملكون اهتمامًا بالابتكار الرقمي، والتقنيات الناشئة، وبناء حلول عملية ذات أثر مؤسسي.",
-];
-
-const awards = [
-  {
-    title: "حلول متميزة قابلة للتمكين",
-    body: "يركز المعسكر على إبراز الحلول النوعية القابلة للتنفيذ والتطوير، مع منحها مساحة أكبر للتمكين والمتابعة بعد مرحلة العرض النهائي.",
-  },
-  {
-    title: "فرص تطوير واحتضان لاحقة",
-    body: "المخرجات القوية لا تُقيَّم فقط من زاوية المنافسة، بل من زاوية الجاهزية للتطوير والتوسّع وتحقيق أثر مؤسسي ملموس.",
-  },
-  {
-    title: "تميّز في الأثر والابتكار",
-    body: "الحلول التي تجمع بين القيمة، والابتكار، والقابلية للتطبيق تحظى بفرصة أكبر للظهور والتقدير داخل منظومة الابتكار المرتبطة بالمعسكر.",
-  },
 ];
 
 const faqItems = [
@@ -447,38 +496,57 @@ function Header() {
   return (
     <>
       <header className="fixed inset-x-0 top-1 z-[60] px-3 md:px-6">
-        <div className="mx-auto flex max-w-7xl items-center justify-between rounded-[26px] border border-white/60 bg-white/72 px-4 py-3 shadow-[0_22px_70px_rgba(13,59,102,0.12)] backdrop-blur-xl md:px-6">
-          <button
-            onClick={() => setOpen(!open)}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(13,59,102,0.12)] bg-white text-[var(--brand-blue)] xl:hidden"
-            aria-label={open ? "إغلاق القائمة" : "فتح القائمة"}
-          >
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 rounded-[26px] border border-white/60 bg-white/72 px-4 py-3 shadow-[0_22px_70px_rgba(13,59,102,0.12)] backdrop-blur-xl md:gap-4 md:px-6">
 
-          <nav className="hidden items-center gap-0.5 xl:flex">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className={`whitespace-nowrap rounded-full px-3 py-2.5 text-sm font-semibold transition duration-300 ${
-                  activeId === item.id
-                    ? "bg-[rgba(13,59,102,0.08)] text-[var(--brand-blue)]"
-                    : "text-[var(--text-soft)] hover:bg-[rgba(13,59,102,0.05)] hover:text-[var(--brand-blue)]"
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
-          </nav>
+          {/* يمين (RTL start): شعار مدينة الملك عبدالله للطاقة الذرية والمتجددة */}
+          <div className="shrink-0">
+            {/* TODO: استبدل هذا بالشعار الرسمي عند توفّره (logo_one.png) */}
+            <div className="flex h-10 w-24 items-center justify-center rounded-md border border-dashed border-slate-300 text-[10px] leading-tight text-slate-400 md:h-12 md:w-28">
+              شعار المدينة
+            </div>
+          </div>
 
-          <div className="flex items-center gap-3">
+          {/* وسط: زر الهامبرغر (موبايل) + الـ navigation (ديسكتوب) + شارة الحالة */}
+          <div className="flex flex-1 items-center justify-center gap-2">
+            <button
+              onClick={() => setOpen(!open)}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(13,59,102,0.12)] bg-white text-[var(--brand-blue)] xl:hidden"
+              aria-label={open ? "إغلاق القائمة" : "فتح القائمة"}
+            >
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+
+            <nav className="hidden items-center gap-0.5 xl:flex">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className={`whitespace-nowrap rounded-full px-3 py-2.5 text-sm font-semibold transition duration-300 ${
+                    activeId === item.id
+                      ? "bg-[rgba(13,59,102,0.08)] text-[var(--brand-blue)]"
+                      : "text-[var(--text-soft)] hover:bg-[rgba(13,59,102,0.05)] hover:text-[var(--brand-blue)]"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </nav>
+
+            {/* شارة "التسجيل متاح" — تظهر على الديسكتوب فقط */}
+            <div className="hidden items-center gap-2 rounded-full border border-[rgba(13,59,102,0.12)] bg-white/80 px-3 py-1.5 text-xs font-semibold text-[var(--brand-blue)] xl:flex">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+              التسجيل متاح
+            </div>
+          </div>
+
+          {/* يسار (RTL end): زر التسجيل + شعار جامعة المجمعة */}
+          <div className="flex shrink-0 items-center gap-3">
             <PrimaryButton href={GOOGLE_FORM_URL} className="hidden xl:inline-flex">
-              سجل الآن
+              سجّل الآن
             </PrimaryButton>
-            <div className="text-right">
-              <div className="text-sm font-semibold text-[var(--text-soft)]">معسكر الابتكار الرقمي والمفتوح</div>
-              <div className="text-lg font-extrabold text-[var(--brand-ink)]">2026</div>
+            {/* TODO: استبدل هذا بالشعار الرسمي عند توفّره (logo_two.png) */}
+            <div className="flex h-10 w-24 items-center justify-center rounded-md border border-dashed border-slate-300 text-[10px] leading-tight text-slate-400 md:h-12 md:w-28">
+              شعار الجامعة
             </div>
           </div>
         </div>
@@ -511,7 +579,7 @@ function Header() {
 }
 
 function HeroSection() {
-  const countdown = useCountdown("2026-05-12T18:00:00+03:00");
+  const countdown = useCountdown("2026-04-28T23:59:00+03:00");
 
   const units = [
     { label: "يوم", value: countdown.days },
@@ -537,25 +605,20 @@ function HeroSection() {
         </div>
 
         <div className="relative z-10 flex min-h-[78svh] flex-col justify-between px-4 py-10 text-white sm:min-h-[82svh] sm:px-6 sm:py-12 md:px-10 md:py-14 lg:min-h-[88svh] lg:px-16">
-          <div className="flex justify-end">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-md">
-              <Zap className="h-4 w-4 text-[var(--brand-gold)]" />
-              تجربة رقمية مؤسسية بطابع ابتكاري متقدم
-            </div>
-          </div>
+          <div className="flex justify-end" />
 
           <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
-            <p className="mb-4 text-sm font-semibold tracking-[0.24em] text-white/78 md:text-base">
-              التسجيل متاح
-            </p>
             <h1 className="max-w-4xl text-balance text-[clamp(2.35rem,8vw,5.75rem)] font-black leading-[1.12] sm:leading-[1.16]">
               معسكر الابتكار الرقمي والمفتوح (2)
             </h1>
             <p className="mt-6 max-w-3xl text-sm leading-7 text-white/88 sm:text-base sm:leading-8 md:text-xl md:leading-9">
-              منصة ابتكار عربية تبني حلولًا نوعية في الطاقة والخدمات والبيانات والعمليات الذكية. تجربة تفاعلية تستهدف طلبة الجامعات والمطورين والمبتكرين، وتربط بين التحول الرقمي، والاستدامة، والبحث التطبيقي، والابتكار المفتوح ضمن رحلة عملية تمتد من الفكرة إلى الحل القابل للتنفيذ.
+              معسكر يهدف إلى تمكين الكفاءات الوطنية من تطوير حلول رقمية مبتكرة تدعم التحول الرقمي والاستدامة
             </p>
 
-            <div className="mt-10 grid w-full max-w-4xl grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+            <p className="mt-8 text-sm font-semibold tracking-wide text-white/70">
+              الوقت المتبقي على إغلاق التسجيل
+            </p>
+            <div className="mt-3 grid w-full max-w-4xl grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
               {units.map((unit) => (
                 <div
                   key={unit.label}
@@ -568,14 +631,19 @@ function HeroSection() {
             </div>
 
             <div className="mt-10 flex w-full max-w-2xl flex-col items-stretch gap-4 sm:items-center md:flex-row md:justify-center">
-              <PrimaryButton href={GOOGLE_FORM_URL} className="w-full sm:w-auto">سجّل عبر النموذج الخارجي</PrimaryButton>
-              <SecondaryButton to="tracks">استكشف المسارات</SecondaryButton>
+              <PrimaryButton href={GOOGLE_FORM_URL} className="w-full sm:w-auto">سجل الآن</PrimaryButton>
+              <SecondaryButton to="about">اكتشف المزيد</SecondaryButton>
             </div>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm leading-6 text-white/78">
-              <span className="rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-md">RTL عربي كامل</span>
-              <span className="rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-md">تسجيل خارجي فقط</span>
-              <span className="rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-md">19 أبريل — 13 مايو 2026</span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-md">
+                <Calendar className="h-3.5 w-3.5 shrink-0" />
+                12-13 مايو (الفترة الحضورية)
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-md">
+                <MapPin className="h-3.5 w-3.5 shrink-0" />
+                جامعة المجمعة
+              </span>
             </div>
           </div>
 
@@ -585,7 +653,7 @@ function HeroSection() {
               className="inline-flex items-center gap-2 rounded-full border border-white/18 bg-white/10 px-4 py-2 text-sm font-semibold text-white/82 backdrop-blur-md transition hover:bg-white/14"
             >
               <Clock3 className="h-4 w-4" />
-              ابدأ الرحلة
+              اكتشف المزيد
             </button>
           </div>
         </div>
@@ -597,36 +665,39 @@ function HeroSection() {
 function AboutSection() {
   return (
     <section id="about" className="section-block section-fade-up">
-      <div className="container grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-        <div>
-          <SectionEyebrow>عن المعسكر</SectionEyebrow>
-          <h2 className="text-3xl font-bold leading-[1.25] text-[var(--brand-ink)] md:text-5xl">
-            مساحة تطبيقية تجمع بين الابتكار المفتوح والتحول الرقمي والاستدامة
-          </h2>
-          <p className="mt-6 text-base leading-8 text-[var(--text-soft)] md:text-lg">
-            يأتي معسكر الابتكار الرقمي والمفتوح بوصفه امتدادًا لجهود تستهدف تعزيز ثقافة الابتكار وتطوير الحلول الرقمية النوعية، عبر بيئة عمل تعاونية تجمع بين التفكير التصميمي، وريادة الأعمال التقنية، والتطبيق العملي، بما يساعد المشاركين على الانتقال من الأفكار الأولية إلى مشروعات أكثر جاهزية للتنفيذ.
-          </p>
-          <p className="mt-4 text-base leading-8 text-[var(--text-soft)] md:text-lg">
-            يركز المعسكر على توظيف التقنيات الحديثة مثل الذكاء الاصطناعي، وإنترنت الأشياء، وتحليل البيانات، بما يسهم في رفع كفاءة العمليات، وتحسين تجربة المستفيدين، وتعزيز مفاهيم الاستدامة والابتكار المؤسسي في مجالات حيوية متنوعة.
-          </p>
+      <div className="container">
+        <SectionTitle>عن المعسكر</SectionTitle>
+        <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+          <div>
+            <div className="space-y-4 text-base leading-loose text-[var(--text-soft)] md:text-lg">
+              <p>
+                يأتي معسكر الابتكار الرقمي والمفتوح كمنصة عملية تهدف إلى تمكين المشاركين من تطوير حلول رقمية مبتكرة، ضمن بيئة تفاعلية تجمع بين التفكير التصميمي، وريادة الأعمال التقنية، والتطبيق العملي.
+              </p>
+              <p>
+                حيث يرافق المعسكر المشاركين في رحلة متكاملة تبدأ من بلورة الفكرة، وتمتد إلى بناء نموذج أولي قابل للتنفيذ.
+              </p>
+              <p>
+                يركز المعسكر على توظيف أحدث التقنيات مثل الذكاء الاصطناعي، وإنترنت الأشياء، وتحليل البيانات، بما يسهم في تحسين الكفاءة التشغيلية، وتعزيز تجربة المستفيد، ودعم مفاهيم الاستدامة والابتكار المؤسسي في مجالات حيوية متنوعة.
+              </p>
+            </div>
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            {[
-              { value: "4", label: "مسارات رئيسية" },
-              { value: "10", label: "مراحل زمنية" },
-              { value: "6", label: "أهداف محورية" },
-            ].map((item) => (
-              <div key={item.label} className="rounded-[24px] border border-[rgba(13,59,102,0.08)] bg-white px-5 py-5 shadow-[0_18px_48px_rgba(13,59,102,0.06)]">
-                <div className="text-3xl font-black text-[var(--brand-blue)]">{item.value}</div>
-                <div className="mt-2 text-sm font-semibold text-[var(--text-soft)]">{item.label}</div>
-              </div>
-            ))}
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              {[
+                { value: "4", label: "مسارات رئيسية" },
+                { value: "6", label: "أهداف محورية" },
+              ].map((item) => (
+                <div key={item.label} className="rounded-[24px] border border-[rgba(13,59,102,0.08)] bg-white px-5 py-5 shadow-[0_18px_48px_rgba(13,59,102,0.06)]">
+                  <div className="text-3xl font-black text-[var(--brand-blue)]">{item.value}</div>
+                  <div className="mt-2 text-sm font-semibold text-[var(--text-soft)]">{item.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className="relative overflow-hidden rounded-[34px] border border-white/70 bg-white shadow-[0_30px_90px_rgba(13,59,102,0.10)]">
-          <img src={ABOUT_IMAGE} alt="بيئة بحث وتطوير وتقنيات نظيفة" className="h-full w-full object-cover" loading="lazy" decoding="async" />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(255,255,255,0.08))]" />
+          <div className="relative overflow-hidden rounded-[34px] border border-white/70 bg-white shadow-[0_30px_90px_rgba(13,59,102,0.10)]">
+            <img src={ABOUT_IMAGE} alt="بيئة بحث وتطوير وتقنيات نظيفة" className="h-full w-full object-cover" loading="lazy" decoding="async" />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(255,255,255,0.08))]" />
+          </div>
         </div>
       </div>
     </section>
@@ -637,11 +708,8 @@ function ObjectivesSection() {
   return (
     <section id="objectives" className="section-block section-fade-up bg-[linear-gradient(180deg,rgba(13,59,102,0.03),transparent_55%)]">
       <div className="container">
-        <SectionHeading
-          title="الأهداف"
-          body="صُممت أهداف المعسكر لتشكّل إطارًا عمليًا يربط بين الابتكار، والاستدامة، والجاهزية التنفيذية، مع منح المشاركين رحلة واضحة من التعلّم إلى بناء الحلول."
-        />
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <SectionTitle>الأهداف</SectionTitle>
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {objectives.map((item, index) => {
             const Icon = item.icon;
             return (
@@ -652,8 +720,8 @@ function ObjectivesSection() {
                   </div>
                   <div className="text-sm font-bold text-[var(--brand-gold)]">{formatNumber(index + 1)}</div>
                 </div>
-                <h3 className="mt-6 text-xl font-bold text-[var(--brand-ink)]">{item.title}</h3>
-                <p className="mt-3 text-base leading-8 text-[var(--text-soft)]">{item.body}</p>
+                <h3 className="mt-6 text-lg font-bold text-[var(--brand-ink)]">{item.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-slate-600">{item.description}</p>
               </article>
             );
           })}
@@ -663,32 +731,6 @@ function ObjectivesSection() {
   );
 }
 
-function ActivitiesSection() {
-  return (
-    <section id="activities" className="section-block section-fade-up">
-      <div className="container">
-        <SectionHeading
-          title="أنشطة المعسكر"
-          body="تنتظم تجربة المعسكر في سلسلة أنشطة مترابطة تبدأ من تشخيص التحديات وتنتهي بتمكين الحلول المتميزة ومتابعة تطويرها."
-        />
-        <div className="grid gap-6 lg:grid-cols-4">
-          {activities.map((activity, index) => (
-            <article key={activity.title} className="relative overflow-hidden rounded-[30px] border border-[rgba(13,59,102,0.08)] bg-white p-6 shadow-[0_20px_60px_rgba(13,59,102,0.06)]">
-              <div className="absolute left-5 top-5 text-6xl font-black text-[rgba(13,59,102,0.05)]">{formatNumber(index + 1)}</div>
-              <div className="relative">
-                <div className="mb-4 inline-flex rounded-full border border-[rgba(242,168,72,0.2)] bg-[rgba(242,168,72,0.08)] px-3 py-1 text-xs font-bold text-[var(--brand-orange)]">
-                  المرحلة {formatNumber(index + 1)}
-                </div>
-                <h3 className="text-xl font-bold text-[var(--brand-ink)]">{activity.title}</h3>
-                <p className="mt-3 text-base leading-8 text-[var(--text-soft)]">{activity.body}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function TracksSection() {
   const [expanded, setExpanded] = useState<number | null>(0);
@@ -696,10 +738,7 @@ function TracksSection() {
   return (
     <section id="tracks" className="section-block section-fade-up">
       <div className="container">
-        <SectionHeading
-          title="المسارات"
-          body="تمثل المسارات الأربعة المجالات الرئيسية للمعسكر، وتعرض تحديات تطبيقية متنوعة تفتح المجال لبناء حلول واقعية ذات أثر واضح وقابلية للتوسع."
-        />
+        <SectionTitle>المسارات</SectionTitle>
 
         <div className="mb-8 overflow-hidden rounded-[34px] border border-white/70 shadow-[0_30px_90px_rgba(13,59,102,0.10)]">
           <img src={TRACKS_IMAGE} alt="المسارات التقنية والابتكارية للمعسكر" className="h-[220px] w-full object-cover sm:h-[260px] md:h-[340px]" loading="lazy" decoding="async" />
@@ -710,7 +749,7 @@ function TracksSection() {
             const isOpen = expanded === index;
             return (
               <article
-                key={track.title}
+                key={track.id}
                 className={`group rounded-[30px] border px-6 py-6 transition duration-300 ${
                   isOpen
                     ? "border-[rgba(13,59,102,0.18)] bg-white shadow-[0_28px_80px_rgba(13,59,102,0.10)]"
@@ -723,13 +762,10 @@ function TracksSection() {
                   aria-expanded={isOpen}
                 >
                   <div className="flex items-start justify-between gap-4">
-                    <div className="rounded-full border border-[rgba(242,168,72,0.22)] bg-[rgba(242,168,72,0.08)] px-3 py-1 text-xs font-bold text-[var(--brand-orange)]">
-                      {track.badge}
-                    </div>
                     <ChevronDown className={`h-5 w-5 text-[var(--brand-blue)] transition duration-300 ${isOpen ? "rotate-180" : ""}`} />
                   </div>
                   <h3 className="mt-5 text-2xl font-bold text-[var(--brand-ink)]">{track.title}</h3>
-                  <p className="mt-3 text-base leading-8 text-[var(--text-soft)]">{track.summary}</p>
+                  <p className="mt-3 text-base leading-8 text-[var(--text-soft)]">{track.description}</p>
                 </button>
 
                 <div className={`grid transition-all duration-500 ${isOpen ? "grid-rows-[1fr] pt-5" : "grid-rows-[0fr]"}`}>
@@ -780,16 +816,13 @@ function TimelineSection() {
   return (
     <section id="timeline" className="section-block section-fade-up bg-[linear-gradient(180deg,rgba(13,59,102,0.03),transparent_65%)]">
       <div className="container">
-        <SectionHeading
-          title="الجدول الزمني"
-          body="رحلة زمنية من عشر مراحل تمتد من إطلاق المعسكر إلى العروض النهائية والختام، مع انتقالات واضحة بين التسجيل، والتهيئة، والتطوير، والتحكيم."
-        />
+        <SectionTitle>الجدول الزمني</SectionTitle>
 
         <div className="relative mx-auto max-w-5xl">
           <div className="absolute right-5 top-0 hidden h-full w-px bg-[rgba(13,59,102,0.10)] md:block" />
           <div
             className="absolute right-5 top-0 hidden w-px bg-[linear-gradient(180deg,var(--brand-gold),var(--brand-orange))] shadow-[0_0_25px_rgba(242,168,72,0.5)] transition-all duration-700 md:block"
-            style={{ height: `${Math.min(100, visible * 10)}%` }}
+            style={{ height: `${Math.min(100, visible * (100 / timeline.length))}%` }}
           />
 
           <div className="space-y-5 md:space-y-8">
@@ -800,7 +833,13 @@ function TimelineSection() {
                 className="timeline-card relative md:pr-16"
               >
                 <div className="absolute right-[11px] top-8 hidden h-3 w-3 rounded-full border-4 border-white bg-[var(--brand-gold)] shadow-[0_0_0_8px_rgba(242,168,72,0.12)] md:block" />
-                <div className="rounded-[30px] border border-[rgba(13,59,102,0.08)] bg-white p-6 shadow-[0_20px_60px_rgba(13,59,102,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_80px_rgba(13,59,102,0.10)]">
+                <div className={`rounded-[30px] border p-6 shadow-[0_20px_60px_rgba(13,59,102,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_80px_rgba(13,59,102,0.10)] ${
+                  item.type === "deadline"
+                    ? "border-red-200 bg-red-50"
+                    : item.type === "final"
+                      ? "border-emerald-500 bg-emerald-50"
+                      : "border-[rgba(13,59,102,0.08)] bg-white"
+                }`}>
                   <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <div className="rounded-full border border-[rgba(242,168,72,0.2)] bg-[rgba(242,168,72,0.08)] px-4 py-2 text-sm font-bold text-[var(--brand-orange)]">
                       {item.date}
@@ -808,11 +847,57 @@ function TimelineSection() {
                     <div className="text-sm font-semibold text-[var(--brand-blue)]">المرحلة {formatNumber(index + 1)}</div>
                   </div>
                   <h3 className="mt-5 text-2xl font-bold text-[var(--brand-ink)]">{item.title}</h3>
-                  <p className="mt-3 text-base leading-8 text-[var(--text-soft)]">{item.body}</p>
                 </div>
               </article>
             ))}
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CriteriaSection() {
+  return (
+    <section id="criteria" className="section-block section-fade-up">
+      <div className="container">
+        <SectionTitle>معايير التقييم</SectionTitle>
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {criteria.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <article key={item.label} className="group rounded-[26px] border border-[rgba(13,59,102,0.08)] bg-white px-5 py-6 shadow-[0_16px_45px_rgba(13,59,102,0.05)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_65px_rgba(13,59,102,0.09)]">
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[linear-gradient(135deg,rgba(13,59,102,0.10),rgba(242,168,72,0.10))] text-[var(--brand-blue)]">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <span className="text-sm font-bold text-[var(--brand-gold)]">{formatNumber(index + 1)}</span>
+                </div>
+                <h3 className="text-base font-bold text-[var(--brand-ink)] leading-7">{item.label}</h3>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TechnologiesSection() {
+  return (
+    <section id="technologies" className="section-block section-fade-up">
+      <div className="container">
+        <SectionTitle>التقنيات الداعمة</SectionTitle>
+        <div className="grid grid-cols-2 gap-5 md:grid-cols-4 lg:grid-cols-7">
+          {technologies.map((tech) => {
+            const Icon = tech.icon;
+            return (
+              <article key={tech.name} className="flex flex-col items-center rounded-[24px] border border-[rgba(13,59,102,0.08)] bg-white px-4 py-6 text-center shadow-[0_16px_45px_rgba(13,59,102,0.05)] transition duration-300 hover:scale-105 hover:shadow-md">
+                <Icon className={`h-14 w-14 ${tech.color} mb-4`} />
+                <span className="text-sm font-semibold leading-6 text-[var(--brand-ink)] md:text-base">{tech.name}</span>
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -860,23 +945,52 @@ function ListCardSection({
 
 function AwardsSection() {
   return (
-    <section id="awards" className="section-block section-fade-up">
+    <section id="awards" className="section-fade-up bg-slate-900 py-20">
       <div className="container">
-        <SectionHeading
-          title="الجوائز وفرص التمكين"
-          body="يركز المعسكر على إبراز الحلول المميزة ذات الجاهزية التنفيذية والأثر العملي، مع منحها مساحة أكبر للتمكين والتطوير بعد العروض النهائية."
-        />
-        <div className="grid gap-5 lg:grid-cols-3">
-          {awards.map((item, index) => (
-            <article key={item.title} className="relative overflow-hidden rounded-[32px] border border-[rgba(13,59,102,0.08)] bg-white p-6 shadow-[0_20px_60px_rgba(13,59,102,0.06)]">
-              <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,var(--brand-gold),var(--brand-orange))]" />
-              <div className="mb-5 inline-flex rounded-full border border-[rgba(13,59,102,0.08)] bg-[var(--surface-alt)] px-3 py-1 text-xs font-bold text-[var(--brand-blue)]">
-                مستوى {formatNumber(index + 1)}
-              </div>
-              <h3 className="text-2xl font-bold text-[var(--brand-ink)]">{item.title}</h3>
-              <p className="mt-3 text-base leading-8 text-[var(--text-soft)]">{item.body}</p>
-            </article>
-          ))}
+        <SectionTitle>الجوائز</SectionTitle>
+
+        <div className="text-center mb-12">
+          <p className="text-lg md:text-xl text-slate-300 mb-2">
+            مجموع جوائز بقيمة تصل إلى
+          </p>
+          <p className="text-6xl md:text-7xl font-extrabold text-emerald-400 tracking-tight">
+            50,000 ريال
+          </p>
+        </div>
+
+        <div className="max-w-5xl mx-auto">
+          <div className="flex justify-center mb-6">
+            <AwardCard
+              place="المركز الأول"
+              amount="15,000"
+              starColor="text-yellow-400"
+              borderColor="border-yellow-400"
+              size="large"
+            />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            <AwardCard
+              place="المركز الثاني"
+              amount="10,000"
+              starColor="text-gray-300"
+              borderColor="border-gray-300"
+              size="medium"
+            />
+            <AwardCard
+              place="المركز الثالث"
+              amount="5,000"
+              starColor="text-orange-500"
+              borderColor="border-orange-500"
+              size="medium"
+            />
+          </div>
+        </div>
+
+        <div className="text-center mt-10">
+          <p className="text-lg text-slate-300">
+            <span className="text-emerald-400 font-semibold">وفرص تمكين واحتضان</span>
+            {" "}للحلول المميزة
+          </p>
         </div>
       </div>
     </section>
@@ -1047,8 +1161,8 @@ export default function Home() {
         <HeroSection />
         <AboutSection />
         <ObjectivesSection />
-        <ActivitiesSection />
         <TracksSection />
+        <AwardsSection />
         <TimelineSection />
         <ListCardSection
           id="requirements"
@@ -1057,20 +1171,8 @@ export default function Home() {
           items={requirements}
           columns={2}
         />
-        <ListCardSection
-          id="criteria"
-          title="معايير التقييم"
-          body="تعتمد المشاريع المقدمة على مجموعة معايير أساسية تركّز على القيمة، والابتكار، والقابلية للتطبيق، وجودة العرض والتنفيذ."
-          items={criteria}
-          columns={4}
-        />
-        <ListCardSection
-          id="technologies"
-          title="التقنيات الداعمة"
-          body="يشجع المعسكر على توظيف تقنيات حديثة تمكّن المشاركين من تحويل الأفكار إلى حلول ذكية ذات أثر واضح في البيئات المؤسسية والتطبيقية."
-          items={technologies}
-          columns={4}
-        />
+        <CriteriaSection />
+        <TechnologiesSection />
         <ListCardSection
           id="audience"
           title="الفئات المستهدفة"
@@ -1078,7 +1180,6 @@ export default function Home() {
           items={audience}
           columns={2}
         />
-        <AwardsSection />
         <FaqSection />
         <RegistrationSection />
       </main>
