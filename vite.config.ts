@@ -5,6 +5,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { defineConfig, type Plugin, type ViteDevServer } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+export default defineConfig({
+  plugins: [react()],
+  base: "/innovation-camp-2026/",
+});
 
 // =============================================================================
 // Manus Debug Collector - Vite Plugin
