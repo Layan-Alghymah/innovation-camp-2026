@@ -1,4 +1,5 @@
 import { type ComponentType, MouseEvent, useEffect, useMemo, useState } from "react";
+import { Link } from "wouter";
 import { SectionTitle } from "../components/SectionTitle";
 import { AwardCard } from "../components/AwardCard";
 import {
@@ -567,6 +568,12 @@ function Header() {
                   {item.label}
                 </button>
               ))}
+              <Link
+                href="/news"
+                className="shrink-0 whitespace-nowrap rounded-full px-2.5 py-2 text-[12px] font-semibold text-[var(--text-soft)] transition duration-300 hover:bg-[rgba(13,59,102,0.05)] hover:text-[var(--brand-blue)] sm:text-[13px] lg:px-3 lg:py-2.5 lg:text-sm"
+              >
+                الأخبار
+              </Link>
             </nav>
           </div>
 
@@ -612,6 +619,13 @@ function Header() {
                 {item.label}
               </button>
             ))}
+            <Link
+              href="/news"
+              onClick={() => setOpen(false)}
+              className="rounded-2xl px-4 py-3 text-right text-sm font-semibold text-[var(--brand-ink)] transition hover:bg-[rgba(13,59,102,0.04)]"
+            >
+              الأخبار
+            </Link>
             <PrimaryButton href={GOOGLE_FORM_URL} className="mt-2 w-full">
               الانتقال إلى التسجيل
             </PrimaryButton>
@@ -1206,6 +1220,11 @@ function Footer() {
                 <a href="#faq" onClick={(e) => handleSectionLink(e, "faq")} className="transition hover:text-[var(--brand-ink)]">
                   الأسئلة الشائعة
                 </a>
+              </li>
+              <li>
+                <Link href="/news" className="transition hover:text-[var(--brand-ink)]">
+                  أخبار المعسكر
+                </Link>
               </li>
             </ul>
           </div>
