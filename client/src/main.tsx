@@ -4,7 +4,7 @@ import App from './App';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
-  <Router base="/innovation-camp-2026">
+  <Router>
     <App />
   </Router>
 );

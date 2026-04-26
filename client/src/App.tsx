@@ -7,7 +7,8 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import NewsPage from "./pages/NewsPage";
 import NewsArticlePage from "./pages/NewsArticlePage";
-
+import PreviousEditionPage from "./pages/PreviousEditionPage";
+import AdminPage from "./pages/AdminPage";
 
 function Router() {
   return (
@@ -15,6 +16,8 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/news"} component={NewsPage} />
       <Route path={"/news/:slug"} component={NewsArticlePage} />
+      <Route path={"/previous-edition"} component={PreviousEditionPage} />
+      <Route path={"/admin"} component={AdminPage} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

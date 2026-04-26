@@ -68,7 +68,15 @@ export function InnerPageFooter() {
                   href="/news"
                   className="transition hover:text-[var(--brand-ink)]"
                 >
-                  أخبار المعسكر
+                  الأخبار
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/previous-edition"
+                  className="transition hover:text-[var(--brand-ink)]"
+                >
+                  النسخة السابقة
                 </Link>
               </li>
             </ul>

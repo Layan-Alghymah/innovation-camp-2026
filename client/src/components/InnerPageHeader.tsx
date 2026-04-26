@@ -7,12 +7,13 @@ const GOOGLE_FORM_URL =
 
 interface InnerPageHeaderProps {
   /** The route key of the current page, used to highlight the active nav link. */
-  activePage: "home" | "news";
+  activePage: "home" | "news" | "previousEdition";
 }
 
 const navLinks = [
   { href: "/", label: "الرئيسية", page: "home" as const },
   { href: "/news", label: "الأخبار", page: "news" as const },
+  { href: "/previous-edition", label: "النسخة السابقة", page: "previousEdition" as const },
 ];
 
 export function InnerPageHeader({ activePage }: InnerPageHeaderProps) {

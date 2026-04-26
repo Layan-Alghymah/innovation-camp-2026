@@ -13,7 +13,9 @@ import {
   ChevronDown,
   Clock3,
   Cloud,
+  Download,
   ExternalLink,
+  FileText,
   GraduationCap,
   Glasses,
   Layers,
@@ -54,7 +56,6 @@ const ABOUT_IMAGE =
 const TRACKS_IMAGE =
   "https://d2xsxph8kpxj0f.cloudfront.net/90499605/Eia45aG6sfMH4DLpNoeybB/innovation-camp-tracks-visual-6vSs76tNfepErhzjDXiZK8.webp";
 const navItems = [
-  { id: "hero", label: "الرئيسية" },
   { id: "about", label: "عن المعسكر" },
   { id: "objectives", label: "الأهداف" },
   { id: "tracks", label: "المسارات" },
@@ -574,6 +575,12 @@ function Header() {
               >
                 الأخبار
               </Link>
+              <Link
+                href="/previous-edition"
+                className="shrink-0 whitespace-nowrap rounded-full px-2.5 py-2 text-[12px] font-semibold text-[var(--text-soft)] transition duration-300 hover:bg-[rgba(13,59,102,0.05)] hover:text-[var(--brand-blue)] sm:text-[13px] lg:px-3 lg:py-2.5 lg:text-sm"
+              >
+                النسخة السابقة
+              </Link>
             </nav>
           </div>
 
@@ -625,6 +632,13 @@ function Header() {
               className="rounded-2xl px-4 py-3 text-right text-sm font-semibold text-[var(--brand-ink)] transition hover:bg-[rgba(13,59,102,0.04)]"
             >
               الأخبار
+            </Link>
+            <Link
+              href="/previous-edition"
+              onClick={() => setOpen(false)}
+              className="rounded-2xl px-4 py-3 text-right text-sm font-semibold text-[var(--brand-ink)] transition hover:bg-[rgba(13,59,102,0.04)]"
+            >
+              النسخة السابقة
             </Link>
             <PrimaryButton href={GOOGLE_FORM_URL} className="mt-2 w-full">
               الانتقال إلى التسجيل
@@ -978,6 +992,108 @@ function TechnologiesSection() {
   );
 }
 
+type ResourceItem = {
+  title: string;
+  description: string;
+  type: "PDF";
+  href?: string;
+  status: "available" | "soon";
+};
+
+function ResourceCard({ item }: { item: ResourceItem }) {
+  const isSoon = item.status === "soon";
+  const Icon = isSoon ? Clock3 : FileText;
+
+  return (
+    <article className="group flex h-full flex-col rounded-[26px] border border-[rgba(13,59,102,0.08)] bg-white px-5 py-6 shadow-[0_16px_45px_rgba(13,59,102,0.05)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_65px_rgba(13,59,102,0.09)]">
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[linear-gradient(135deg,rgba(13,59,102,0.10),rgba(242,168,72,0.10))] text-[var(--brand-blue)]">
+          <Icon className="h-5 w-5" />
+        </div>
+        <span className="rounded-full bg-[rgba(13,59,102,0.06)] px-3 py-1 text-xs font-bold text-[var(--text-soft)]">
+          {item.type}
+        </span>
+      </div>
+
+      <h3 className="text-base font-black leading-7 text-[var(--brand-ink)] md:text-lg">{item.title}</h3>
+      <p className="mt-2 text-sm leading-7 text-[var(--text-soft)]">{item.description}</p>
+
+      <div className="mt-auto pt-5">
+        {isSoon ? (
+          <button
+            type="button"
+            disabled
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[rgba(13,59,102,0.12)] bg-[rgba(13,59,102,0.04)] px-5 py-3 text-sm font-bold text-[var(--text-soft)] opacity-80"
+          >
+            <Clock3 className="h-4 w-4" />
+            قريباً
+          </button>
+        ) : (
+          <a
+            href={item.href}
+            download
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--brand-blue)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--brand-blue-2)]"
+          >
+            <Download className="h-4 w-4" />
+            تحميل الملف
+          </a>
+        )}
+      </div>
+    </article>
+  );
+}
+
+function ResourcesSection() {
+  const resources: ResourceItem[] = [
+    {
+      title: "الملف الإرشادي",
+      description: "دليل مختصر يساعد المشاركين على فهم آلية المعسكر ومتطلباته.",
+      type: "PDF",
+      href: "/resources/guide.pdf",
+      status: "available",
+    },
+    {
+      title: "ملف اللقاء التعريفي",
+      description: "عرض اللقاء التعريفي الذي يوضح فكرة المعسكر، مساراته، وآلية المشاركة.",
+      type: "PDF",
+      href: "/resources/intro-session.pdf",
+      status: "available",
+    },
+    {
+      title: "ملف ورشة المسار الأول: الطاقة الذكية والاستدامة",
+      description: "عرض ورشة الطاقة الذكية والاستدامة ضمن مسارات المعسكر.",
+      type: "PDF",
+      href: "/resources/smart-energy-workshop.pdf",
+      status: "available",
+    },
+    {
+      title: "قالب العرض",
+      description: "قالب مخصص لمساعدة الفرق على إعداد العرض النهائي، وسيتم توفيره قريبا.",
+      type: "PDF",
+      status: "soon",
+    },
+    {
+      title: "قالب البوستر",
+      description: "قالب مخصص لتصميم بوستر العرض ليوم المعرض، وسيتم توفيره قريبًا.",
+      type: "PDF",
+      status: "soon",
+    },
+  ];
+
+  return (
+    <section id="resources" className="section-block section-fade-up">
+      <div className="container">
+        <SectionTitle>مصادر وأدوات مساعدة</SectionTitle>
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {resources.map((item) => (
+            <ResourceCard key={item.title} item={item} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function AudienceSection() {
   return (
     <section id="audience" className="section-block section-fade-up">
@@ -1223,7 +1339,12 @@ function Footer() {
               </li>
               <li>
                 <Link href="/news" className="transition hover:text-[var(--brand-ink)]">
-                  أخبار المعسكر
+                  الأخبار
+                </Link>
+              </li>
+              <li>
+                <Link href="/previous-edition" className="transition hover:text-[var(--brand-ink)]">
+                  النسخة السابقة
                 </Link>
               </li>
             </ul>
@@ -1294,6 +1415,7 @@ export default function Home() {
         />
         <CriteriaSection />
         <TechnologiesSection />
+        <ResourcesSection />
         <AudienceSection />
         <FaqSection />
         <RegistrationSection />
